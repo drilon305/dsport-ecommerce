@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect} from 'react'
 import Fab from '@material-ui/core/Fab'
+
 import Pagination from '@material-ui/lab/Pagination'
 import Grid from '@material-ui/core/Grid'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
@@ -10,6 +11,7 @@ import Layout from "../components/ui/layout"
 import DynamicToolbar from '../components/product-list/DynamicToolbar'
 import ListOfProducts from '../components/product-list/ListOfProducts'
 import { alfabetic, time, price } from '../components/product-list/SortFunctions'
+
 
 const useStyles = makeStyles(theme => ({
   fab: {
@@ -69,6 +71,9 @@ export default function ProductList({
   const scroll = () => {
     scrollRef.current.scrollIntoView({ behavior: 'smooth' })
   }
+
+
+  
 
   useEffect(() => {
     setPage(1)

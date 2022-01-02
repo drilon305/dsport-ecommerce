@@ -71,6 +71,7 @@ export default function ProductFrameGrid({
   setSelectedSize,
   setSelectedColor,
   hasStyles,
+  stock
 }) {
   const classes = useStyles()
   const [open, setOpen] = useState(false)
@@ -80,9 +81,9 @@ export default function ProductFrameGrid({
     setOpen(false)
   }
 
-  const imagesIndex = colorIndex(product, variant, selectedColor)
+  const imageIndex = colorIndex(product, variant, selectedColor)
 
-  const imgURL = process.env.GATSBY_STRAPI_URL + (imagesIndex !== -1 ? product.node.variants[imagesIndex].images[0].url : variant.images[0].url)
+  const imgURL = process.env.GATSBY_STRAPI_URL + (imageIndex !== -1 ? product.node.variants[imageIndex].images[0].url : variant.images[0].url)
   const productName = product.node.name.split(" ")[0]
 
   return (
@@ -133,6 +134,8 @@ export default function ProductFrameGrid({
         setSelectedSize={setSelectedSize}
         setSelectedColor={setSelectedColor}
         hasStyles={hasStyles}
+        stock={stock}
+        imageIndex={imageIndex}
       />
     </Grid>
   )

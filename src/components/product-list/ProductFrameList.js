@@ -10,6 +10,7 @@ import Rating from '../home/Rating'
 import Sizes from './Sizes'
 import Swatches from './Swatches'
 import QtyButton from './QtyButton'
+import { getStockDisplay } from '../product-detail/ProductInfo'
 
 import frame from '../../images/product-frame-list.svg'
 import { colorIndex } from './ProductFrameGrid'
@@ -64,12 +65,17 @@ export default function ProductFrameList({
   setSelectedSize,
   setSelectedColor,
   hasStyles,
+  stock
 }) {
   const classes = useStyles()
 
   const imageIndex = colorIndex(product, variant, selectedColor);
 
   const images = imageIndex !== -1 ? product.node.variants[imageIndex].images : variant.images
+
+  const selectedVariant = imageIndex === -1 ? product.node.variants.indexOf(variant) : imageIndex
+
+  const stockDisplay = getStockDisplay(stock, selectedVariant)
 
   return (
     <Grid item container>
@@ -131,7 +137,7 @@ export default function ProductFrameList({
           </Grid>
           <Grid item>
             <Typography variant="h3" classes={{ root: classes.stock }}>
-              12 Currently In Stock
+              {stockDisplay}
             </Typography>
           </Grid>
         </Grid>

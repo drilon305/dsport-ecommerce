@@ -98,7 +98,7 @@ export default function ProductFrameGrid({
         container
         direction="column"
         onClick={() =>
-          matchesMD
+          matchesMD 
             ? navigate(
                 `/${product.node.category.name.toLowerCase()}/${product.node.name
                   .split(" ")[0]

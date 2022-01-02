@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button'
 import clsx from 'clsx'
 import Chip from '@material-ui/core/Chip'
 import Typography from '@material-ui/core/Typography'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
 import favorite from '../../images/favorite.svg'
@@ -21,12 +22,27 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: theme.palette.secondary.main,
         height: '38rem',
         width: '28rem',
+        [theme.breakpoints.down('md')]: {
+          width: '100%'
+        },
+        [theme.breakpoints.down('xs')]: {
+          height: '55rem'
+        },
     },
     center: {
         backgroundColor: theme.palette.primary.main,
         height: '30rem',
         width: '38rem',
-        position: 'absolute'
+        position: 'absolute',
+        [theme.breakpoints.down('lg')]: {
+          width: '35rem'
+        },
+        [theme.breakpoints.down('md')]: {
+          width: '100%'
+        },
+        [theme.breakpoints.down('xs')]: {
+          height: '45rem'
+        },
     },
     icon: {
         height: '3rem',
@@ -51,7 +67,11 @@ const useStyles = makeStyles(theme => ({
       paddingLeft: '1rem'
     },
     chipContainer: {
-      marginTop: '1rem'
+      marginTop: '1rem',
+      [theme.breakpoints.down('xs')]: {
+        marginTop: 0,
+        marginBottom: '1rem'
+      },
     },
     chipRoot: {
       height: '3rem',
@@ -90,6 +110,8 @@ export default function ProductInfo({
   const [selectedSize, setSelectedSize] = useState(null)
   const [selectedColor, setSelectedColor] = useState(null)
 
+  const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'));
+
   const imageIndex = colorIndex({node: { variants }}, variants[selectedVariant], selectedColor )
 
   const sizes = []
@@ -115,7 +137,7 @@ export default function ProductInfo({
       justifyContent="center"
       alignItems="flex-end"
       direction="column"
-      xs={6}
+      lg={6}
     >
       <Grid
         item
@@ -133,7 +155,7 @@ export default function ProductInfo({
         <Grid item>
           <img
             src={subscription}
-            alt=" add item to subscriptions"
+            alt="add item to subscriptions"
             className={classes.icon}
           />
         </Grid>
@@ -147,6 +169,7 @@ export default function ProductInfo({
         <Grid
           item
           container
+          direction={matchesXS ? 'column' : 'row'}
           justifyContent="space-between"
           classes={{
             root: clsx(classes.detailsContainer, classes.sectionContainer),
@@ -196,8 +219,9 @@ export default function ProductInfo({
         <Grid
           item
           container
-          justifyContent="space-between"
-          alignItems="center"
+          direction={matchesXS ? 'column' : 'row'}
+          justifyContent={matchesXS ? 'space-around' : 'space-between'}
+          alignItems={matchesXS ? 'flex-start' : 'center'}
           classes={{ root: clsx(classes.actionsContainer, classes.sectionContainer) }}
         >
           <Grid item>

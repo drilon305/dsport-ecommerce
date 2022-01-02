@@ -8,6 +8,10 @@ const useStyles = makeStyles(theme => ({
     selected: {
         height: '32rem',
         width: '32rem',
+        [theme.breakpoints.down('sm')]: {
+          width: '25rem',
+          height: '25rem'
+        },
     },
     small: {
         height: '5rem',
@@ -27,7 +31,7 @@ export default function ProductImages({
   const classes = useStyles()
 
   return (
-    <Grid item container direction="column" alignItems="center" xs={6}>
+    <Grid item container direction="column" alignItems="center" lg={6}>
       <Grid item>
         <img
           src={process.env.GATSBY_STRAPI_URL + images[selectedImage].url}

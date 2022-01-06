@@ -158,7 +158,7 @@ export default function ProductInfo({
         variant.color === colors[0]
     )
 
-    setSelectedVariant(0)
+    setSelectedVariant(variants.indexOf(newVariant))
   }, [selectedSize])
 
   useEffect(() => {

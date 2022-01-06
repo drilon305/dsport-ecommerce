@@ -61,6 +61,7 @@ export default function ListOfProducts({
 
   const FrameHelper = ({ Frame, product, variant }) => {
     const [selectedSize, setSelectedSize] = useState(null)
+    const [selectedVariant, setSelectedVariant] = useState(null)
     const [selectedColor, setSelectedColor] = useState(null)
     const [stock, setStock] = useState(null)
 
@@ -76,14 +77,35 @@ export default function ListOfProducts({
       }
     }, [error, data])
 
+    useEffect(() => {
+      if(selectedSize === null) return undefined
+    
+      setSelectedColor(null)
+  
+      const newVariant = product.node.variants.find(
+        item =>
+          item.size === selectedSize &&
+          item.style === variant.style &&
+          item.color === colors[0]
+      )
+  
+      setSelectedVariant(newVariant)
+    }, [selectedSize])
+
     var sizes = []
     var colors = []
-    product.node.variants.map(variant => {
-      sizes.push(variant.size)
-      if (!colors.includes(variant.color)) { 
-        colors.push(variant.color)
+    product.node.variants.map(item => {
+      sizes.push(item.size)
+
+
+      if (!colors.includes(item.color) &&
+      item.size === (selectedSize || variant.size) &&
+      item.style === variant.style) { 
+        colors.push(item.color)
       }
     })
+
+    
 
     const hasStyles = product.node.variants.some(variant => variant.style !== null)
 
@@ -91,10 +113,10 @@ export default function ListOfProducts({
     return (
       <Frame
         product={product}
-        variant={variant}
+        variant={selectedVariant || variant}
         sizes={sizes}
         colors={colors}
-        selectedSize={selectedSize}
+        selectedSize={selectedSize || variant.size}
         selectedColor={selectedColor}
         setSelectedSize={setSelectedSize}
         setSelectedColor={setSelectedColor}

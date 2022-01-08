@@ -22,7 +22,39 @@ const useStyles = makeStyles(theme => ({
         height: 17,
         marginBottom: 10,
     },
-  
+    accountIcon: {
+      marginTop: '2rem'
+    },
+    textField: {
+      width: '20rem',
+    },
+    input: {
+      color: theme.palette.secondary.main,
+    },
+    login: {
+      width: '20rem',
+      borderRadius: 50,
+      textTransform: 'none',
+    },
+    fbText: {
+      fontSize: '1.5rem',
+      fontWeight: 700,
+      textTransform: 'none',
+    },
+    fbButton: {
+      marginTop: '-1rem'
+    },
+    visibleIcon: {
+      padding: 0,
+    },
+    "@global": {
+      ".MuiInput-underline:before, .MuiInput-underline:hover:not(.Mui-disabled):before": {
+        borderBottom: `2px solid ${theme.palette.secondary.main}`,
+      },
+      ".MuiInput-underline:after": {
+        borderBottom: `2px solid ${theme.palette.primary.main}`,
+      },
+    },
 }))
 
 export default function Login() {
@@ -33,7 +65,7 @@ export default function Login() {
 
   return (
     <>
-      <Grid item>
+      <Grid item classes={{root: classes.accountIcon}}>
         <img src={accountIcon} alt="login page" />
       </Grid>
       <Grid item>
@@ -59,6 +91,7 @@ export default function Login() {
           value={password}
           onChange={e => setPassword(e.target.value)}
           placeholder="Password"
+          type={visible ? 'text' : 'password'}
           classes={{ root: classes.textField }}
           InputProps={{
             startAdornment: (
@@ -70,7 +103,10 @@ export default function Login() {
             ),
             endAdornment: (
               <InputAdornment position='end'>
-                <img src={visible ? ShowPasswordIcon : HidePasswordIcon} alt={`${visible ? 'Show' : 'Hidde'} Password`} />
+                <IconButton classes={{root: classes.visibleIcon}} onClick={() => setVisible(!visible)}>
+                  <img src={visible ? ShowPasswordIcon : HidePasswordIcon} alt={`${visible ? 'Show' : 'Hidde'} Password`} />
+                </IconButton>
+
               </InputAdornment>
             ),
             classes: { input: classes.input }
@@ -78,15 +114,15 @@ export default function Login() {
         />
       </Grid>
       <Grid item>
-        <Button variant='contained' color='secondary'>
+        <Button variant='contained' color='secondary' classes={{root: classes.login}}>
           <Typography variant='h5'>
             login
           </Typography>
           </Button>
         </Grid>
         <Grid item>
-          <Button>
-            <Typography variant='h3'>
+          <Button classes={{root: classes.fbButton}}>
+            <Typography variant='h3' classes={{root: classes.fbText}}>
               login with Facebook
             </Typography>
           </Button>

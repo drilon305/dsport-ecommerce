@@ -59,17 +59,9 @@ const useStyles = makeStyles(theme => ({
     reset: {
       marginTop: '-4rem'
     },
-    "@global": {
-      ".MuiInput-underline:before, .MuiInput-underline:hover:not(.Mui-disabled):before": {
-        borderBottom: `2px solid ${theme.palette.secondary.main}`,
-      },
-      ".MuiInput-underline:after": {
-        borderBottom: `2px solid ${theme.palette.primary.main}`,
-      },
-    },
 }))
 
-export default function Login() {
+export default function Login({ steps, setSelectedStep}) {
     const classes = useStyles()
 
   const [values, setValues] = useState({
@@ -101,6 +93,12 @@ export default function Login() {
         <img src={visible ? ShowPasswordIcon : HidePasswordIcon} alt={`${visible ? 'Show' : 'Hidde'} Password`} />
       ),
     }
+  }
+
+  const navigateSignUp = () => {
+    const signUp = steps.find(step => step.label === 'Sign Up')
+
+    setSelectedStep(steps.indexOf(signUp))
   }
 
   return(
@@ -178,7 +176,7 @@ export default function Login() {
        
         <Grid item container justifyContent='space-between'>
           <Grid item>
-            <IconButton>
+            <IconButton onClick={navigateSignUp}>
               <img src={addUserIcon} alt='sign up' />
             </IconButton>
           </Grid>

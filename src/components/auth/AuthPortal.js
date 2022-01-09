@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Login from './Login'
+import SignUp from './SignUp'
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -21,14 +22,21 @@ const useStyles = makeStyles(theme => ({
     container: {
         marginBottom: '8rem'
     },
-
+    "@global": {
+      ".MuiInput-underline:before, .MuiInput-underline:hover:not(.Mui-disabled):before": {
+        borderBottom: `2px solid ${theme.palette.secondary.main}`,
+      },
+      ".MuiInput-underline:after": {
+        borderBottom: `2px solid ${theme.palette.primary.main}`,
+      },
+    },
 }))
 
 export default function AuthPortal() {
     const classes = useStyles()
-    const [selectedStep, setSelectedStep] = useState(0)
+  const [selectedStep, setSelectedStep] = useState(0)
 
-    const steps = [{component: Login, label: 'Login'}]
+  const steps = [{ component: Login, label: 'Login' }, { component: SignUp, label: 'Sign Up' }]
 
     return (
       <Grid

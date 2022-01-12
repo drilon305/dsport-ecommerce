@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Fields from './Fields'
 import { EmailPassword } from './Login'
 
+
 import addUserIcon from '../../images/add-user.svg'
 import nameAdornment from '../../images/name-adornment.svg'
 import forward from '../../images/forward-outline.svg'
@@ -78,6 +79,12 @@ export default function SignUp({ steps, setSelectedStep}) {
         }
     }
 
+    const handleComplete = () => {
+        const complete = steps.find(step => step.label === 'Complete')
+
+        setSelectedStep(steps.indexOf(complete))
+    }
+
     const nameField = { name: {
         helperText: 'you must enter a name' ,
         placeholder: 'Name',
@@ -97,7 +104,7 @@ export default function SignUp({ steps, setSelectedStep}) {
         </Grid>
             <Fields fields={fields} errors={errors} setErrors={setErrors} values={values} setValues={setValues} />
             <Grid item>
-                <Button variant='contained' color='secondary' classes={{
+                <Button onClick={() => info ? handleComplete() : null} variant='contained' color='secondary' classes={{
                     root: clsx(classes.fbSignUp, {
                         [classes.removeBtnMargin]: info
                     })

@@ -109,8 +109,8 @@ export default function SignUp({ steps, setSelectedStep}) {
 
     const fields = info ? EmailPassword(classes, false, false, visible, setVisible) : nameField
 
-    const disabled =  Object.keys(errors).some(error => errors[error] === true) ||
-  Object.keys(errors).length !== Object.keys(values).length
+    const disabled = Object.keys(errors).some(error => errors[error] === true) ||
+        Object.keys(errors).length !== Object.keys(values).length
 
     return (
         <>

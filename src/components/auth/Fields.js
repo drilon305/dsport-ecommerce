@@ -23,8 +23,8 @@ export default function Fields({ fields, errors, setErrors, values, setValues })
     return (
         Object.keys(fields).map(field => {
             const validateHelper = event => {
-            const valid = validate({[field]: event.target.value })
-            setErrors({...errors, [field]: !valid[field] })
+            return validate({[field]: event.target.value })
+            
      }
      
            return !fields[field].hidden ? (
@@ -32,25 +32,27 @@ export default function Fields({ fields, errors, setErrors, values, setValues })
              <TextField
                value={values[field]}
                onChange={e => {
-                 if (errors[field]) {
-                   validateHelper(e)
+                const valid = validateHelper(e)
+                 if (errors[field] || valid[field] === true) {
+                  setErrors({...errors, [field]: !valid[field] })
                  }
                  setValues({ ...values, [field]: e.target.value })
                }}
                placeholder={fields[field].placeholder}
-               onBlur={e => validateHelper(e)}
+               onBlur={e => {
+                 const valid = validateHelper(e)
+                 setErrors({...errors, [field]: !valid[field] })
+               }}
                error={errors[field]}
                helperText={errors[field] && fields[field].helperText}
                type={fields[field].type}
                classes={{ root: classes.textField }}
                InputProps={{
-                 startAdornment: (
-                   <InputAdornment position='start'>
-                     <span className={classes.emailAdornment}>
-                       {fields[field].startAdornment}
-                     </span>
-                   </InputAdornment>
-                 ),
+                startAdornment: fields[field].startAdornment ? (
+                  <InputAdornment position="start">
+                    {fields[field].startAdornment}
+                  </InputAdornment>
+                ) : undefined,
                  endAdornment: fields[field].endAdornment ? (
                    <InputAdornment position='end'>
                 

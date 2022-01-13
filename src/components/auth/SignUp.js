@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Grid from '@material-ui/core/Grid'
 import clsx from 'clsx'
+import axios from 'axios'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
@@ -59,7 +60,8 @@ export default function SignUp({ steps, setSelectedStep}) {
     const classes = useStyles()
     const [values, setValues] = useState({
         email: '',
-        password: ''
+        password: '',
+        name: ''
       })
         const [errors, setErrors] = useState({})
         const [visible, setVisible] = useState(false)
@@ -80,9 +82,19 @@ export default function SignUp({ steps, setSelectedStep}) {
     }
 
     const handleComplete = () => {
-        const complete = steps.find(step => step.label === 'Complete')
+        axios.post(process.env.GATSBY_STRAPI_URL + '/auth/local/register', {
+            username: values.name,
+            email: values.email,
+            password: values.password
+        }).then(response => {
+            const complete = steps.find(step => step.label === 'Complete')
 
-        setSelectedStep(steps.indexOf(complete))
+            setSelectedStep(steps.indexOf(complete))
+        }).catch(error =>{
+            console.error(error)
+        })
+
+      
     }
 
     const nameField = { name: {
@@ -97,6 +109,9 @@ export default function SignUp({ steps, setSelectedStep}) {
 
     const fields = info ? EmailPassword(classes, false, false, visible, setVisible) : nameField
 
+    const disabled =  Object.keys(errors).some(error => errors[error] === true) ||
+  Object.keys(errors).length !== Object.keys(values).length
+
     return (
         <>
         <Grid item>
@@ -104,11 +119,17 @@ export default function SignUp({ steps, setSelectedStep}) {
         </Grid>
             <Fields fields={fields} errors={errors} setErrors={setErrors} values={values} setValues={setValues} />
             <Grid item>
-                <Button onClick={() => info ? handleComplete() : null} variant='contained' color='secondary' classes={{
-                    root: clsx(classes.fbSignUp, {
-                        [classes.removeBtnMargin]: info
-                    })
-                }}>
+                <Button
+                disabled={info && disabled}
+                onClick={() => info ? handleComplete() : null} 
+                variant='contained'
+                color='secondary'
+                classes={{
+                root: clsx(classes.fbSignUp, {
+                        [classes.removeBtnMargin]: info,
+                    }),
+                }}
+                >
                     <Typography variant='h5' classes={{ root: classes.fbText }}>
                         Sign Up{info ? '' : ' with Facebook'}
                     </Typography>

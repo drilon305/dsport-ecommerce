@@ -62,7 +62,7 @@ export const EmailPassword = (classes, hideEmail, hidePassword, visible, setVisi
       hidden: hideEmail,
       startAdornment: (
         <span className={classes.emailAdornment}>
-          <EmailAdornment />
+          <EmailAdornment  />
         </span>
       ),
     },

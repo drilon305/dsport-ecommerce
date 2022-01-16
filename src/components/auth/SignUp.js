@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import Fields from './Fields'
 import { EmailPassword } from './Login'
+import { setUser } from '../../contexts/actions'
 
 
 import addUserIcon from '../../images/add-user.svg'
@@ -56,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-export default function SignUp({ steps, setSelectedStep}) {
+export default function SignUp({ steps, setSelectedStep, dispatchUser}) {
     const classes = useStyles()
     const [values, setValues] = useState({
         email: '',
@@ -87,8 +88,9 @@ export default function SignUp({ steps, setSelectedStep}) {
             email: values.email,
             password: values.password
         }).then(response => {
+            dispatchUser(setUser({ ...response.data.user, jwt: response.data.jwt}))
             const complete = steps.find(step => step.label === 'Complete')
-
+           
             setSelectedStep(steps.indexOf(complete))
         }).catch(error =>{
             console.error(error)

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Grid from '@material-ui/core/Grid'
 import clsx from 'clsx'
 import axios from 'axios'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
@@ -93,6 +94,7 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser}) {
     const [errors, setErrors] = useState({})
     const [visible, setVisible] = useState(false)
     const [forgot, setForgot] = useState(false)
+    const [loading, setLoading] = useState(false)
 
   const fields = EmailPassword(classes, false, forgot, visible, setVisible)
 
@@ -103,12 +105,16 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser}) {
   }
 
   const handleLogin = () => {
+    setLoading(true)
+
     axios.post(process.env.GATSBY_STRAPI_URL + '/auth/local', {
       identifier: values.email,
       password: values.password
     }).then(res => {
+      setLoading(false)
       dispatchUser(setUser({ ...res.data.user, jwt: res.data.jwt}))
     }).catch(error => {
+      setLoading(false)
       console.error(error)
     })
   }
@@ -130,7 +136,7 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser}) {
       <Grid item>
         <Button 
         variant='contained' 
-        disabled={!forgot && disabled}
+        disabled={loading || !forgot && disabled}
         color='secondary'
         onClick={() => forgot ? null : handleLogin()}
          classes={{
@@ -138,9 +144,11 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser}) {
             [classes.reset]: forgot
           })
         }}>
-          <Typography variant='h5'>
+          {loading ? <CircularProgress /> : (
+            <Typography variant='h5'>
             {forgot ? 'reset password' : 'login'}
           </Typography>
+          )}
         </Button>
       </Grid>
       {forgot ? null : (

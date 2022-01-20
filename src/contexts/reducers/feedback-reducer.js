@@ -7,7 +7,7 @@ export default function feedbackReducer(state, action) {
         case SET_SNACKBAR:
             if (open === false) return { ...state, open }
 
-            return { open: true, backgroundColor: status === 'error' ? '#FF3232' : '#4BB543', message: }
+            return { open: true, backgroundColor: status === 'error' ? '#FF3232' : '#4BB543', message}
         default:
             return state
     }

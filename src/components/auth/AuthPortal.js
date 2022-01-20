@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Login from './Login'
 import SignUp from './SignUp'
 import Complete from './Complete'
-import { UserContext } from '../../contexts'
+import { UserContext, FeedbackContext } from '../../contexts'
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -38,6 +38,7 @@ export default function AuthPortal() {
     const classes = useStyles()
   const [selectedStep, setSelectedStep] = useState(0)
   const { user, dispatchUser } = useContext(UserContext)
+  const { feedback, dispatchFeedback } = useContext(FeedbackContext)
 
 
   const steps = [
@@ -66,6 +67,8 @@ export default function AuthPortal() {
                   <Step.component
                     steps={steps}
                     user={user}
+                    feedback={feedback}
+                    dispatchFeedback={dispatchFeedback}
                     dispatchUser={dispatchUser}
                     setSelectedStep={setSelectedStep}
                     key={Step.label}

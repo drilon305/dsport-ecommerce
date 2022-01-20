@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Fields from './Fields'
-import { setUser } from '../../contexts/actions'
+import { setUser, setSnackbar } from '../../contexts/actions'
 
 import accountIcon from "../../images/account.svg"
 import EmailAdornment from "../../images/EmailAdornment"
@@ -84,7 +84,7 @@ export const EmailPassword = (classes, hideEmail, hidePassword, visible, setVisi
   }
 )
 
-export default function Login({ steps, setSelectedStep, user, dispatchUser}) {
+export default function Login({ steps, setSelectedStep, user, dispatchUser, dispatchFeedback}) {
     const classes = useStyles()
 
   const [values, setValues] = useState({
@@ -95,6 +95,7 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser}) {
     const [visible, setVisible] = useState(false)
     const [forgot, setForgot] = useState(false)
     const [loading, setLoading] = useState(false)
+  
 
   const fields = EmailPassword(classes, false, forgot, visible, setVisible)
 
@@ -110,12 +111,14 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser}) {
     axios.post(process.env.GATSBY_STRAPI_URL + '/auth/local', {
       identifier: values.email,
       password: values.password
-    }).then(res => {
+    }).then(response => {
       setLoading(false)
-      dispatchUser(setUser({ ...res.data.user, jwt: res.data.jwt}))
+      dispatchUser(setUser({ ...response.data.user, jwt: response.data.jwt}))
     }).catch(error => {
+      const { message } = error.response.data.message[0].messages[0]
       setLoading(false)
       console.error(error)
+      dispatchFeedback(setSnackbar({ status: 'error', message}))
     })
   }
 

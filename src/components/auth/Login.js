@@ -122,6 +122,25 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser, disp
     })
   }
 
+  const handleForgot = () => {
+    setLoading(true)
+
+    axios.post(process.env.GATSBY_STRAPI_URL + '/auth/forgot-password', {
+      email: values.email
+    }).then(resposne => {
+      dispatchFeedback(setSnackbar({ status: 'success', message: 'Reset Code Sent'}))
+
+      setTimeout(() => {
+        setForgot(false)
+      }, 6000)
+    }).catch(error => {
+      const { message } = error.response.data.message[0].messages[0]
+      setLoading(false)
+      console.error(error)
+      dispatchFeedback(setSnackbar({ status: 'error', message}))
+    })
+  }
+
   const disabled = Object.keys(errors).some(error => errors[error] === true) ||
         Object.keys(errors).length !== Object.keys(values).length
 
@@ -141,7 +160,7 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser, disp
         variant='contained' 
         disabled={loading || !forgot && disabled}
         color='secondary'
-        onClick={() => forgot ? null : handleLogin()}
+        onClick={() => forgot ? handleForgot() : handleLogin()}
          classes={{
           root: clsx(classes.login, {
             [classes.reset]: forgot
@@ -178,7 +197,8 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser, disp
           [classes.close]: forgot
         })}}>
           <IconButton onClick={() => setForgot(!forgot)}>
-            <img src={forgot ? close : forgotPasswordIcon} alt={forgot ? 'back to login' : 'forgot password'} />
+            <img src={forgot ? close : forgotPasswordIcon}
+             alt={forgot ? 'back to login' : 'forgot password'} />
           </IconButton>
         </Grid>
       </Grid>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import Login from './Login'
 import SignUp from './SignUp'
+import Reset from './Reset'
 import Complete from './Complete'
 import { UserContext, FeedbackContext } from '../../contexts'
 
@@ -44,8 +45,20 @@ export default function AuthPortal() {
   const steps = [
     { component: Login, label: 'Login' },
     { component: SignUp, label: 'Sign Up'},
-    { component: Complete, label: 'Complete'}
+    { component: Complete, label: 'Complete'},
+    { component: Reset, label: 'Reset'}
   ]
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+
+    if (code) {
+      const resetStep = steps.find(step => step.label === 'Reset')
+
+      setSelectedStep(steps.indexOf(resetStep))
+    }
+  }, [])
 
     return (
       <Grid

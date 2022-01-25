@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@material-ui/core/Grid'
 import axios from 'axios'
 import Typography from '@material-ui/core/Typography'
@@ -30,6 +30,7 @@ export default function Reset({ steps, setSelectedStep, dispatchFeedback }) {
     const [values, setValues] = useState({ password: '', confirmation: ''})
     const [errors, setErrors] = useState({})
     const [loading, setLoading] = useState(false)
+    const [success, setSuccess] = useState(false)
 
     const { password } = EmailPassword(classes, true, false, visible, setVisible)
 
@@ -45,14 +46,10 @@ export default function Reset({ steps, setSelectedStep, dispatchFeedback }) {
             passwordConfirmation: values.confirmation
         }).then(response => {
             setLoading(false)
+            setSuccess(true)
             dispatchFeedback(setSnackbar({ status: 'sucess', message: 'Password Reset Successfully'}))
 
-            setTimeout(() => {
-                window.history.replaceState(null, null, window.location.pathname)
-
-                const login = steps.find(step => step.label === 'Login')
-                setSelectedStep(steps.indexOf(login))
-            }, 6000)
+            
         }).catch(error => {
             setLoading(false)
             console.error(error)
@@ -64,6 +61,22 @@ export default function Reset({ steps, setSelectedStep, dispatchFeedback }) {
 
     const disabled = Object.keys(errors).some(error => errors[error] === true) ||
         Object.keys(errors).length !== Object.keys(values).length || values.password !== values.confirmation
+
+    useEffect(() => {
+        if (!success) return
+
+        const timer = setTimeout(() => {
+
+            window.history.replaceState(null, null, window.location.pathname)
+
+            const login = steps.find(step => step.label === 'Login')
+            setSelectedStep(steps.indexOf(login))
+
+            return () => clearTimeout(timer)
+        }, 6000)
+
+    }, [success])
+
 
     return (
         <>

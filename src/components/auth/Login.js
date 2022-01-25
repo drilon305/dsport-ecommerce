@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@material-ui/core/Grid'
 import clsx from 'clsx'
 import axios from 'axios'
@@ -95,6 +95,7 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser, disp
     const [visible, setVisible] = useState(false)
     const [forgot, setForgot] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [success, setSuccess] = useState(false)
   
 
   const fields = EmailPassword(classes, false, forgot, visible, setVisible)
@@ -107,6 +108,7 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser, disp
 
   const handleLogin = () => {
     setLoading(true)
+   
 
     axios.post(process.env.GATSBY_STRAPI_URL + '/auth/local', {
       identifier: values.email,
@@ -126,23 +128,34 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser, disp
     setLoading(true)
 
     axios.post(process.env.GATSBY_STRAPI_URL + '/auth/forgot-password', {
-      email: values.email
+      email: values.email,
     }).then(resposne => {
-      dispatchFeedback(setSnackbar({ status: 'success', message: 'Reset Code Sent'}))
+      setLoading(false)
+      setSuccess(true)
 
-      setTimeout(() => {
-        setForgot(false)
-      }, 6000)
+      dispatchFeedback(setSnackbar({ status: 'success', message: 'Reset Code Sent' }))
+
+
     }).catch(error => {
       const { message } = error.response.data.message[0].messages[0]
       setLoading(false)
       console.error(error)
-      dispatchFeedback(setSnackbar({ status: 'error', message}))
+      dispatchFeedback(setSnackbar({ status: 'error', message }))
     })
   }
 
   const disabled = Object.keys(errors).some(error => errors[error] === true) ||
         Object.keys(errors).length !== Object.keys(values).length
+
+  useEffect(() => {
+    if(!success) return 
+
+    const timer = setTimeout(() => {
+      setForgot(false)
+    }, 6000)
+
+    return () => clearTimeout(timer)
+  }, [success])
 
   return(
     <>

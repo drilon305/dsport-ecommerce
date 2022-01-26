@@ -17,11 +17,21 @@ const useStyles = makeStyles(theme => ({
         width: '20rem',
         borderRadius: 50,
         textTransform: 'none',
-        marginBottom: '4rem'
+        marginBottom: '4rem',
+        [theme.breakpoints.down('xs')]: {
+            width: '15rem',
+            fontSize: '1rem'
+        },
     },
     icon: {
         marginTop: '2rem'
     },
+    buttonText: {
+        [theme.breakpoints.down('xs')]: {
+            fontSize: '1.5rem'
+        },
+      },
+
 }))
 
 export default function Reset({ steps, setSelectedStep, dispatchFeedback }) {
@@ -94,7 +104,7 @@ export default function Reset({ steps, setSelectedStep, dispatchFeedback }) {
                     onClick={handleReset}
                 >
                     {loading ? <CircularProgress /> : (
-                        <Typography variant='h5'>
+                        <Typography variant='h5' classes={{root: classes.buttonText}}>
                             reset password
                         </Typography>)}
 

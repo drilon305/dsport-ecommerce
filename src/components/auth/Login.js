@@ -33,14 +33,9 @@ const useStyles = makeStyles(theme => ({
       width: '20rem',
       borderRadius: 50,
       textTransform: 'none',
-    },
-    fbText: {
-      fontSize: '1.5rem',
-      fontWeight: 600,
-      textTransform: 'none',
-    },
-    fbButton: {
-      marginTop: '-1rem',
+      [theme.breakpoints.down('xs')]: {
+        width: '15rem',
+      },
     },
     visibleIcon: {
       padding: 0,
@@ -53,6 +48,11 @@ const useStyles = makeStyles(theme => ({
     },
     reset: {
       marginTop: '-4rem'
+    },
+    buttonText: {
+      [theme.breakpoints.down('xs')]: {
+          fontSize: '1.5rem'
+      },
     },
 }))
 
@@ -180,25 +180,13 @@ export default function Login({ steps, setSelectedStep, user, dispatchUser, disp
           })
         }}>
           {loading ? <CircularProgress /> : (
-            <Typography variant='h5'>
-            {forgot ? 'reset password' : 'login'}
+            <Typography variant='h5'  classes={{root: classes.buttonText}}>
+            {forgot ? 'forgot password' : 'login'}
           </Typography>
           )}
         </Button>
       </Grid>
-      {forgot ? null : (
-        <Grid item>
-          <Button classes={{
-            root: clsx(classes.fbButton, {
-              [classes.passwordError]: errors.password
-            })
-          }}>
-            <Typography variant='h3' classes={{ root: classes.fbText }}>
-              Login with Facebook
-            </Typography>
-          </Button>
-        </Grid>
-      )}
+     
        
         <Grid item container justifyContent='space-between'>
           <Grid item>

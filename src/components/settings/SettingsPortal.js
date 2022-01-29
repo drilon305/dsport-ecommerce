@@ -1,19 +1,20 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
-import { useSprings, animated } from 'react-spring'
+import { useSpring, useSprings, animated } from 'react-spring'
 import useResizeAware from 'react-resize-aware'
 
 import { UserContext } from '../../contexts'
+import Settings from './Settings'
 
 import accountIcon from "../../images/account.svg"
 import settingsIcon from "../../images/settings.svg"
 import orderHistoryIcon from "../../images/order-history.svg"
 import favoritesIcon from "../../images/favorite.svg"
 import subscriptionIcon from "../../images/subscription.svg"
-import background from "../../images/toolbar-background.svg"
+import background from "../../images/repeating-smallest.svg"
 
 const useStyles = makeStyles(theme => ({
     name: {
@@ -21,12 +22,12 @@ const useStyles = makeStyles(theme => ({
     },
     dashboard: {
         width: '100%',
-        height: '30rem',
+        minHeight: '30rem',
+        height: 'auto',
         margin: '5rem 0',
-        backgroundImage: `${background}`,
-        backgroundSize: 'cover',
+        backgroundImage: `url(${background})`,
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        backgroundRepeat: 'repeat',
         borderTop: `0.5rem solid ${theme.palette.primary.main}`,
         borderBottom: `0.5rem solid ${theme.palette.primary.main}`
     },
@@ -37,15 +38,17 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const AnimatedButton = animated(Button)
+const AnimatedGrid = animated(Grid)
 
 export default function SetttingsPortal() {
     const classes = useStyles()
     const { user } = useContext(UserContext)
     const [selectedSetting, setSelectedSetting] = useState(null)
     const [resizeListener, sizes] = useResizeAware()
+    const [showComponent, setShowComponent] = useState(false)
 
     const buttons = [
-        { label: 'Settings', icon: settingsIcon },
+        { label: 'Settings', icon: settingsIcon, component: Settings },
         { label: 'Order History', icon: orderHistoryIcon },
         { label: 'Favorites', icon: favoritesIcon },
         { label: 'Subscriptions', icon: subscriptionIcon },
@@ -87,49 +90,76 @@ export default function SetttingsPortal() {
     }))
     )
 
+    const styles = useSpring({
+      opacity: selectedSetting === null || showComponent ? 1 : 0,
+      delay: selectedSetting === null || showComponent ? 0 : 1350,
+    })
+
+
+    useEffect(() => {
+        if(selectedSetting === null) {
+            setShowComponent(false)
+            return
+        }
+
+
+        const timer = setTimeout(() => setShowComponent(true), 2000)
+        return () => clearTimeout(timer)
+    }, [selectedSetting])
+
     return (
-        <Grid container direction='column' alignItems='center'>
-            {resizeListener}
-            <Grid item>
-                <img src={accountIcon} alt='settings page' />
-            </Grid>
-            {sizes.width} x {sizes.height}
-            <Grid item>
-                <Typography variant='h4' classes={{ root: classes.name }}>
-                    Welcome back, {user.username}
-                </Typography>
-            </Grid>
-            <Grid
-                item
-                container
-                classes={{ root: classes.dashboard }}
-                justifyContent='space-around'
-                alignItems='center'
-                >
-                {springs.map((prop, i) => (
-                    <Grid item key={i}>
-                        <AnimatedButton
-                         variant='contained'
-                        color='primary'
-                        onClick={() => handleClick(buttons[i].label)}
-                        style={prop}
-                        >
-                            <Grid container direction='column'>
-                                <Grid item>
-                                    <img src={buttons[i].icon}
-                                        alt={buttons[i].label}
-                                        className={classes.icon} />
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant='h5'>
-                                        {buttons[i].label}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </AnimatedButton>
-                    </Grid>
-                ))}
-            </Grid>
+      <Grid container direction="column" alignItems="center">
+        {resizeListener}
+        <Grid item>
+          <img src={accountIcon} alt="settings page" />
         </Grid>
+        {sizes.width} x {sizes.height}
+        <Grid item>
+          <Typography variant="h4" classes={{ root: classes.name }}>
+            Welcome back, {user.username}
+          </Typography>
+        </Grid>
+        <Grid
+          item
+          container
+          classes={{ root: classes.dashboard }}
+          justifyContent="space-around"
+          alignItems="center"
+        >
+          {springs.map((prop, i) => {
+            const button = buttons[i]
+
+            return (
+              <Grid item key={i}>
+                <AnimatedButton
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleClick(button.label)}
+                  style={prop}
+                >
+                  <AnimatedGrid style={styles} container direction="column">
+                    {selectedSetting === button.label && showComponent ? (
+                      <button.component />
+                    ) : (
+                      <>
+                        <Grid item>
+                          <img
+                            src={button.icon}
+                            alt={button.label}
+                            className={classes.icon}
+                          />
+                        </Grid>
+                        <Grid item>
+                          <Typography variant="h5">{button.label}</Typography>
+                        </Grid>
+                      </>
+                    )}
+                  </AnimatedGrid>
+                </AnimatedButton>
+              </Grid>
+            )
+          })}
+        </Grid>
+      </Grid>
     )
 }

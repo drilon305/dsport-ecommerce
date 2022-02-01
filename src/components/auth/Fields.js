@@ -15,58 +15,61 @@ const useStyles = makeStyles(theme => ({
         },
       },
       input: {
-        color: theme.palette.secondary.main,
+        color: ({ isWhite }) => isWhite ? '#fff' : theme.palette.secondary.main,
       },
 
 }))
 
-export default function Fields({ fields, errors, setErrors, values, setValues }) {
-    const classes = useStyles()
+export default function Fields({
+  fields,
+  errors,
+  setErrors,
+  values,
+  setValues,
+  isWhite
+}) {
+  const classes = useStyles({ isWhite})
 
-    return (
-        Object.keys(fields).map(field => {
-            const validateHelper = event => {
-            return validate({[field]: event.target.value })
-            
-     }
-     
-           return !fields[field].hidden ? (
-           <Grid item key={field}>
-             <TextField
-               value={values[field]}
-               onChange={e => {
-                const valid = validateHelper(e)
-                 if (errors[field] || valid[field] === true) {
-                  setErrors({...errors, [field]: !valid[field] })
-                 }
-                 setValues({ ...values, [field]: e.target.value })
-               }}
-               placeholder={fields[field].placeholder}
-               onBlur={e => {
-                 const valid = validateHelper(e)
-                 setErrors({...errors, [field]: !valid[field] })
-               }}
-               error={errors[field]}
-               helperText={errors[field] && fields[field].helperText}
-               type={fields[field].type}
-               classes={{ root: classes.textField }}
-               InputProps={{
-                startAdornment: fields[field].startAdornment ? (
-                  <InputAdornment position="start">
-                    {fields[field].startAdornment}
-                  </InputAdornment>
-                ) : undefined,
-                 endAdornment: fields[field].endAdornment ? (
-                   <InputAdornment position='end'>
-                
-                     {fields[field].endAdornment}
-                   </InputAdornment>
-                 ) : undefined,
-                 classes: { input: classes.input }
-               }}
-             />
-           </Grid>
-           ) : null
-           })
-    )
+  return Object.keys(fields).map(field => {
+    const validateHelper = event => {
+      return validate({ [field]: event.target.value })
+    }
+
+    return !fields[field].hidden ? (
+      <Grid item key={field}>
+        <TextField
+          value={values[field]}
+          onChange={e => {
+            const valid = validateHelper(e)
+            if (errors[field] || valid[field] === true) {
+              setErrors({ ...errors, [field]: !valid[field] })
+            }
+            setValues({ ...values, [field]: e.target.value })
+          }}
+          placeholder={fields[field].placeholder}
+          onBlur={e => {
+            const valid = validateHelper(e)
+            setErrors({ ...errors, [field]: !valid[field] })
+          }}
+          error={errors[field]}
+          helperText={errors[field] && fields[field].helperText}
+          type={fields[field].type}
+          classes={{ root: classes.textField }}
+          InputProps={{
+            startAdornment: fields[field].startAdornment ? (
+              <InputAdornment position="start">
+                {fields[field].startAdornment}
+              </InputAdornment>
+            ) : undefined,
+            endAdornment: fields[field].endAdornment ? (
+              <InputAdornment position="end">
+                {fields[field].endAdornment}
+              </InputAdornment>
+            ) : undefined,
+            classes: { input: classes.input },
+          }}
+        />
+      </Grid>
+    ) : null
+  })
 }

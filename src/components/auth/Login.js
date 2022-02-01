@@ -13,9 +13,9 @@ import { setUser, setSnackbar } from '../../contexts/actions'
 
 import accountIcon from "../../images/account.svg"
 import EmailAdornment from "../../images/EmailAdornment"
-import PasswordAdornment from "../../images/password-adornment.svg"
-import HidePasswordIcon from "../../images/hide-password.svg"
-import ShowPasswordIcon from "../../images/show-password.svg"
+import PasswordAdornment from "../../images/PasswordAdornment"
+import HidePasswordIcon from "../../images/HidePassword"
+import ShowPasswordIcon from "../../images/ShowPassword"
 import addUserIcon from "../../images/add-user.svg"
 import forgotPasswordIcon from "../../images/forgot.svg"
 import close from "../../images/close.svg"
@@ -56,33 +56,46 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-export const EmailPassword = (classes, hideEmail, hidePassword, visible, setVisible) => (
-  {
-    email: {
-      helperText: 'invalid email',
-      placeholder: 'Email',
-      type: 'text',
-      hidden: hideEmail,
-      startAdornment: (
-        <span className={classes.emailAdornment}>
-          <EmailAdornment  />
-        </span>
-      ),
-    },
-    password: {
-      helperText: 'your password must be at least 8 characters and include one uppercase letter, one number, and special character',
-      placeholder: 'Password',
-      hidden: hidePassword,
-      type: visible ? 'text' : 'password',
-      startAdornment: <img src={PasswordAdornment} alt='password' />,
-      endAdornment: (
-        <IconButton classes={{ root: classes.visibleIcon }} onClick={() => setVisible(!visible)}>
-          <img src={visible ? ShowPasswordIcon : HidePasswordIcon} alt={`${visible ? 'Show' : 'Hidde'} Password`} />
-        </IconButton>
-      ),
-    },
-  }
-)
+export const EmailPassword = (
+  classes,
+  hideEmail,
+  hidePassword,
+  visible,
+  setVisible,
+  isWhite
+) => ({
+  email: {
+    helperText: "invalid email",
+    placeholder: "Email",
+    type: "text",
+    hidden: hideEmail,
+    startAdornment: (
+      <span className={classes.emailAdornment}>
+        <EmailAdornment color={isWhite ? "#fff" : null} />
+      </span>
+    ),
+  },
+  password: {
+    helperText:
+      "your password must be at least 8 characters and include one uppercase letter, one number, and special character",
+    placeholder: "Password",
+    hidden: hidePassword,
+    type: visible ? "text" : "password",
+    startAdornment: <PasswordAdornment color={isWhite ? "#fff" : null} />,
+    endAdornment: (
+      <IconButton
+        classes={{ root: classes.visibleIcon }}
+        onClick={() => setVisible(!visible)}
+      >
+        {visible ? (
+          <ShowPasswordIcon color={isWhite ? "#fff" : null} />
+        ) : (
+          <HidePasswordIcon color={isWhite ? "#fff" : null} />
+        )}
+      </IconButton>
+    ),
+  },
+})
 
 export default function Login({ steps, setSelectedStep, user, dispatchUser, dispatchFeedback}) {
     const classes = useStyles()

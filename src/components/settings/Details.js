@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import Fields from '../auth/Fields'
 import { EmailPassword } from '../auth/Login'
+import Slots from './Slots'
 
 import fingerprint from '../../images/fingerprint.svg'
 import NameAdornment from '../../images/NameAdornment'
@@ -33,27 +34,7 @@ const useStyles = makeStyles(theme => ({
       marginLeft: '5rem'
     },
   },
-    slot: {
-      backgroundColor: '#fff',
-      borderRadius: 25,
-      width: '2.5rem',
-      height: '2.5rem',
-      minWidth: 0,
-      border: `0.15rem solid ${theme.palette.secondary.main}`,
-      '&:hover': {
-        backgroundColor: '#fff',
-      },
-    },
-    slotText: {
-      color: theme.palette.secondary.main,
-      marginLeft: '-0.25rem',
-    },
-    slotWrapper: {
-      marginLeft: '2rem',
-      '& > :not(:first-child)': {
-       marginLeft: '-0.5rem'
-    },
-    },
+
     "@global": {
       ".MuiInput-underline:before, .MuiInput-underline:hover:not(.Mui-disabled):before": {
         borderBottom: "2px solid #fff",
@@ -129,15 +110,7 @@ export default function Details() {
         </Grid>
       ))}
       <Grid container>
-        <Grid item classes={{ root: classes.slotWrapper }}>
-          {[1, 2, 3].map(slot => (
-            <Button key={slot} classes={{ root: classes.slot }}>
-              <Typography variant="h5" classes={{ root: classes.slotText }}>
-                {slot}
-              </Typography>
-            </Button>
-          ))}
-        </Grid>
+       <Slots />
       </Grid>
     </Grid>
   )

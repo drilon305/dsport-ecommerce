@@ -15,15 +15,22 @@ const useStyles = makeStyles(theme => ({
     icon: {
         marginBottom: '3rem'
     },
+    locationContainer: {
+        position: 'relative',
+    },
     chipWrapper: {
         marginTop: '2rem',
         marginBottom: '3rem'
     },
     fieldContainer: {
         '& > :not(:first-child)': {
-           marginTop: '2rem'
-          },
+            marginTop: '2rem'
         },
+    },
+    slotContainer: {
+        position: 'absolute',
+        bottom: 0,
+    },
 }))
 
 export default function Location() {
@@ -42,17 +49,24 @@ export default function Location() {
                 placeholder: 'Zip Code',
                 helperText: 'invalid zip code',
                 startAdornment: <img src={zipAdornment} alt='zip code' />
-
         },
     }
 
     return (
-      <Grid item container direction="column" alignItems="center" xs={6}>
-        <Grid item>
-          <img src={locationIcon} alt="location setting" className={classes.icon} />
-        </Grid>
-        <Grid item container direction="column" alignItems="center" classes={{root: classes.fieldContainer}}>
-          <Fields
+      <Grid
+            item
+            container
+            direction="column"
+            alignItems="center"
+            xs={6}
+            justifyContent='center'
+            classes={{root: classes.locationContainer}}
+            >
+            <Grid item>
+                <img src={locationIcon} alt="location setting" className={classes.icon} />
+            </Grid>
+            <Grid item container direction="column" alignItems="center" classes={{ root: classes.fieldContainer }}>
+                <Fields
             fields={fields}
             values={values}
             setValues={setValues}
@@ -64,7 +78,7 @@ export default function Location() {
         <Grid item classes={{root: classes.chipWrapper}}>
             <Chip label='City, State' />
         </Grid>
-        <Grid item container>
+        <Grid item container classes={{root: classes.slotContainer}}>
             <Slots />
         </Grid>
       </Grid>

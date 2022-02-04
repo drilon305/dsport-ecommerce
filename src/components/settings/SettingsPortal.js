@@ -7,8 +7,9 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useSpring, useSprings, animated } from 'react-spring'
 import useResizeAware from 'react-resize-aware'
 
-import { UserContext } from '../../contexts'
 import Settings from './Settings'
+import { UserContext } from '../../contexts'
+import { setUser } from '../../contexts/actions'
 
 import accountIcon from "../../images/account.svg"
 import settingsIcon from "../../images/settings.svg"
@@ -45,6 +46,9 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: theme.palette.secondary.main
       },
     },
+    logout: {
+      color: theme.palette.error.main
+    },
 }))
 
 const AnimatedButton = animated(Button)
@@ -52,7 +56,7 @@ const AnimatedGrid = animated(Grid)
 
 export default function SetttingsPortal() {
  
-  const { user } = useContext(UserContext)
+  const { user, dispatchUser, defaultUser } = useContext(UserContext)
   const [selectedSetting, setSelectedSetting] = useState(null)
   const [resizeListener, sizes] = useResizeAware()
   const [showComponent, setShowComponent] = useState(false)
@@ -113,6 +117,10 @@ export default function SetttingsPortal() {
     delay: selectedSetting === null || showComponent ? 0 : 1350,
   })
 
+  const handleLogout = () => {
+    dispatchUser(setUser(defaultUser))
+  }
+
   useEffect(() => {
     if (selectedSetting === null) {
       setShowComponent(false)
@@ -134,6 +142,13 @@ export default function SetttingsPortal() {
         <Typography variant="h4" classes={{ root: classes.name }}>
           Welcome back, {user.username}
         </Typography>
+      </Grid>
+      <Grid item>
+        <Button onClick={handleLogout}>
+          <Typography variant='h5' classes={{root: classes.logout}}>
+    logout
+          </Typography>
+        </Button>
       </Grid>
       <Grid
         item

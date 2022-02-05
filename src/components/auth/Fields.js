@@ -26,7 +26,8 @@ export default function Fields({
   setErrors,
   values,
   setValues,
-  isWhite
+  isWhite,
+  disabled
 }) {
   const classes = useStyles({ isWhite})
 
@@ -54,6 +55,7 @@ export default function Fields({
           error={errors[field]}
           helperText={errors[field] && fields[field].helperText}
           type={fields[field].type}
+          disabled={disabled}
           classes={{ root: classes.textField }}
           InputProps={{
             startAdornment: fields[field].startAdornment ? (

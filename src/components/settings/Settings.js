@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import clsx from 'clsx'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -22,21 +22,30 @@ const useStyles = makeStyles(theme => ({
 
 export default function Settings({ setSelectedSetting}) {
     const classes = useStyles()
-
     const { user } = useContext(UserContext)
+    const [edit, setEdit] = useState(false)
+    const [changesMade, setChangesMade] = useState(false)
+    
+
 
     return (
         <>
         <Grid container classes={{root: classes.sectionContainer}}>
-            <Details user={user} />
-            <Payments user={user} />
+            <Details user={user} edit={edit} setChangesMade={setChangesMade} />
+            <Payments user={user} edit={edit} />
         </Grid>
         <Grid container classes={{root: clsx(classes.bottomRow, classes.sectionContainer)}}>
             <Location 
-            user={user} />
+            setChangesMade={setChangesMade}
+            user={user}
+            edit={edit}
+            />
             <Edit
              user={user} 
-             setSelectedSetting={setSelectedSetting} />
+             setSelectedSetting={setSelectedSetting}
+             changesMade={changesMade}
+             edit={edit}
+             setEdit={setEdit} />
         </Grid>
         </>
     )

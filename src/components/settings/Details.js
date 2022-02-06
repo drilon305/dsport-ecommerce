@@ -52,30 +52,31 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-export default function Details({ user, edit, setChangesMade }) {
+export default function Details({
+  user,
+  edit,
+  setChangesMade,
+  values,
+  setValues,
+  slot,
+  setSlot
+}) {
   const classes = useStyles()
   const [visible, setVisible] = useState(false)
-  const [values, setValues] = useState({
-    name: "",
-    phone: "",
-    password: "********",
-  })
-  const [errors, setErrors] = useState({})
-  const [slot, setSlot] = useState(0) 
 
+  const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    setValues({ ...user.contactInfo[slot], password: '********'})
-
+    setValues({ ...user.contactInfo[slot], password: "********" })
   }, [slot])
 
   useEffect(() => {
-    const changed = Object.keys(user.contactInfo[slot]).some(field => values[field]
-      !== user.contactInfo[slot][field])
+    const changed = Object.keys(user.contactInfo[slot]).some(
+      field => values[field] !== user.contactInfo[slot][field]
+    )
 
     setChangesMade(changed)
   }, [values])
-
 
   const email_password = EmailPassword(
     classes,
@@ -90,7 +91,7 @@ export default function Details({ user, edit, setChangesMade }) {
     name: {
       helperText: "you must enter a name",
       placeholder: "Name",
-      startAdornment: <NameAdornment color='#fff' />,
+      startAdornment: <NameAdornment color="#fff" />,
     },
     phone: {
       helperText: "invalid phone number",
@@ -106,11 +107,15 @@ export default function Details({ user, edit, setChangesMade }) {
   const fields = [name_phone, email_password]
 
   return (
-    <Grid item container direction="column"
+    <Grid
+      item
+      container
+      direction="column"
       xs={6}
       alignItems="center"
-      justifyContent='center'
-      classes={{ root: classes.detailsContainer }}>
+      justifyContent="center"
+      classes={{ root: classes.detailsContainer }}
+    >
       <Grid item>
         <img
           src={fingerprint}
@@ -136,8 +141,8 @@ export default function Details({ user, edit, setChangesMade }) {
           />
         </Grid>
       ))}
-      <Grid item container classes={{root: classes.slotContainer}}>
-       <Slots slot={slot} setSlot={setSlot} />
+      <Grid item container classes={{ root: classes.slotContainer }}>
+        <Slots slot={slot} setSlot={setSlot} />
       </Grid>
     </Grid>
   )

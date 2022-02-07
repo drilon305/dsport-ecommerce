@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import { FeedbackContext } from '../../contexts'
 import { setSnackbar, setUser } from '../../contexts/actions'
+import Confirmation from './Confirmation'
 
 import BackwardsIcon from '../../images/BackwardsOutline'
 import editIcon from '../../images/edit.svg'
@@ -38,31 +39,55 @@ export default function Edit({
   const classes = useStyles()
   const { dispatchFeedback } = useContext(FeedbackContext)
   const [loading, setLoading] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleEdit = () => {
     setEdit(!edit)
+    const { password, ...newDetails } = details
 
-    if(edit && changesMade) {
-        setLoading(true)
-
-      const { password, ...newDetails } = details
-
-      axios.post(process.env.GATSBY_STRAPI_URL_ + '/users-permissions/set-settings', {
-        details: newDetails, detailSlot, location: locations, locationSlot
-      }, { headers: { Authorization: `Bearer ${user.jwt}` } })
-      .then(response => {
-        setLoading(false)
-        dispatchFeedback(setSnackbar({ status: 'success', message: 'Settings Saved Successfully'}))
-        dispatchUser(setUser({...response.data, jwt: user.jwt, oboarding: true}))
-        .catch(error => {
-          setLoading(false)
-          console.error(error)
-          dispatchFeedback(setSnackbar({status: 'error', message: 'There was a problem saving your settings, please try again.'}))
-
-        })
-      })
+    if(password !== "********") {
+      setDialogOpen(true)
     }
 
+    if (edit && changesMade) {
+      setLoading(true)
+
+     
+
+      axios
+        .post(
+          process.env.GATSBY_STRAPI_URL + "/users-permissions/set-settings",
+          {
+            details: newDetails,
+            detailSlot,
+            location: locations,
+            locationSlot,
+          },
+          { headers: { Authorization: `Bearer ${user.jwt}` } }
+        )
+        .then(response => {
+          setLoading(false)
+          dispatchFeedback(
+            setSnackbar({
+              status: "success",
+              message: "Settings Saved Successfully",
+            })
+          )
+          dispatchUser(
+            setUser({...response.data, jwt: user.jwt, onboarding: true })
+          )
+          }).catch(error => {
+            setLoading(false)
+            console.error(error)
+            dispatchFeedback(
+              setSnackbar({
+                status: "error",
+                message:
+                  "There was a problem saving your settings, please try again.",
+              })
+            )
+          })
+    }
   }
 
 
@@ -93,6 +118,7 @@ export default function Edit({
         </IconButton>
         )}
       </Grid>
+      <Confirmation dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
     </Grid>
   )
 }

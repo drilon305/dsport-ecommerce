@@ -101,7 +101,7 @@ export default function Header({ categories }) {
       {routes.map(route => (
         <Tab
           component={Link}
-          to={route.node.link || `${route.node.name.toLowerCase()}`}
+          to={route.node.link || `/${route.node.name.toLowerCase()}`}
           classes={{ root: classes.tab }}
           label={route.node.name}
           key={route.node.strapiId}

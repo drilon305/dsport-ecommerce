@@ -66,8 +66,9 @@ export default function Details({
 
   const [errors, setErrors] = useState({})
 
+
   useEffect(() => {
-    setValues({ ...user.contactInfo[slot], password: "********" })
+    setValues({ ...user.contactInfo[slot], password: "********"})
   }, [slot])
 
   useEffect(() => {
@@ -75,11 +76,10 @@ export default function Details({
       field => values[field] !== user.contactInfo[slot][field]
     )
 
-    setChangesMade(changed)
+      setChangesMade(changed)
   }, [values])
 
   const email_password = EmailPassword(
-    classes,
     false,
     false,
     visible,

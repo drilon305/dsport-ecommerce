@@ -38,7 +38,18 @@ export default function Location({ user, edit, setChangesMade, values, setValues
     
     const [errors, setErrors] = useState({})
     
+    useEffect(() => {
+        setValues(user.locations[slot])
+    }, [slot])
+
+    useEffect(() => {
+        const changed = Object.keys(user.locations[slot]).some(field => values[field]
+          !== user.locations[slot][field])
     
+        setChangesMade(changed)
+      }, [values])
+
+
 
     const fields = {
         street: {
@@ -53,16 +64,6 @@ export default function Location({ user, edit, setChangesMade, values, setValues
         },
     }
 
-    useEffect(() => {
-        setValues(user.locations[slot])
-    }, [slot])
-
-    useEffect(() => {
-        const changed = Object.keys(user.locations[slot]).some(field => values[field]
-          !== user.locations[slot][field])
-    
-        setChangesMade(changed)
-      }, [values])
 
     return (
       <Grid

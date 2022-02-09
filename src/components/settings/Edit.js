@@ -39,7 +39,7 @@ export default function Edit({
   const classes = useStyles()
   const { dispatchFeedback } = useContext(FeedbackContext)
   const [loading, setLoading] = useState(false)
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(true)
 
   const handleEdit = () => {
     setEdit(!edit)
@@ -118,7 +118,7 @@ export default function Edit({
         </IconButton>
         )}
       </Grid>
-      <Confirmation dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
+      <Confirmation dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} setSnackbar={setSnackbar} user={user} dispatchFeedback={dispatchFeedback} />
     </Grid>
   )
 }

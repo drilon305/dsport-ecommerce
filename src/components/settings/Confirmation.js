@@ -37,6 +37,10 @@ export default function Confirmation({ dialogOpen, setDialogOpen, dispatchFeedba
             confirmation: { ...password, placeholder: "New Password" },
         }
 
+      const disabled =
+        Object.keys(errors).some(error => errors[error] === true) ||
+        Object.keys(errors).length !== Object.keys(values).length
+
   const handleConfirm = () => {
     setLoading(true)
 
@@ -85,8 +89,13 @@ export default function Confirmation({ dialogOpen, setDialogOpen, dispatchFeedba
           setSnackbar({ status: "error", message: "Old Password Invalid" })
         )
       })
-
   }
+
+  const handleCancel = () => {
+    setDialogOpen(false)
+    dispatchFeedback(setSnackbar({status: 'error', message: 'Your password has NOT been changed.'}))
+  }
+
   return (
     <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
       <DialogTitle disableTypography>
@@ -110,7 +119,7 @@ export default function Confirmation({ dialogOpen, setDialogOpen, dispatchFeedba
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={() => setDialogOpen(false)}
+          onClick={handleCancel}
           disabled={loading}
           color="primary"
           classes={{ root: classes.button }}
@@ -120,7 +129,7 @@ export default function Confirmation({ dialogOpen, setDialogOpen, dispatchFeedba
         <Button
           onClick={handleConfirm}
           color="secondary"
-          disabled={loading}
+          disabled={loading || disabled}
           classes={{ root: classes.button }}
         >
          {loading ? <CircularProgress /> : 'Yes, Change My Password'}

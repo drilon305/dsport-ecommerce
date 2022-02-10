@@ -59,12 +59,14 @@ export default function Details({
   values,
   setValues,
   slot,
-  setSlot
+  setSlot,
+  errors,
+  setErrors
 }) {
   const classes = useStyles()
   const [visible, setVisible] = useState(false)
 
-  const [errors, setErrors] = useState({})
+  
 
 
   useEffect(() => {

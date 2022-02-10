@@ -33,68 +33,88 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-export default function Location({ user, edit, setChangesMade, values, setValues, slot, setSlot }) {
-    const classes = useStyles()
-    
-    const [errors, setErrors] = useState({})
-    
-    useEffect(() => {
-        setValues(user.locations[slot])
-    }, [slot])
+export default function Location({
+  user,
+  edit,
+  setChangesMade,
+  values,
+  setValues,
+  slot,
+  setSlot,
+  errors,
+  setErrors,
+}) {
+  const classes = useStyles()
 
-    useEffect(() => {
-        const changed = Object.keys(user.locations[slot]).some(field => values[field]
-          !== user.locations[slot][field])
-    
-        setChangesMade(changed)
-      }, [values])
+  useEffect(() => {
+    setValues(user.locations[slot])
+  }, [slot])
 
-
-
-    const fields = {
-        street: {
-            placeholder: 'Street',
-            helperText: 'invalid address',
-            startAdornment: <img src={streetAdornment} alt='street' />
-        },
-        zip: {
-                placeholder: 'Zip Code',
-                helperText: 'invalid zip code',
-                startAdornment: <img src={zipAdornment} alt='zip code' />
-        },
-    }
-
-
-    return (
-      <Grid
-            item
-            container
-            direction="column"
-            alignItems="center"
-            xs={6}
-            justifyContent='center'
-            classes={{root: classes.locationContainer}}
-            >
-            <Grid item>
-                <img src={locationIcon} alt="location setting" className={classes.icon} />
-            </Grid>
-            <Grid item container direction="column" alignItems="center" classes={{ root: classes.fieldContainer }}>
-                <Fields
-            fields={fields}
-            values={values}
-            setValues={setValues}
-            errors={errors}
-            setErrors={setErrors}
-            isWhite
-            disabled={!edit}
-          />
-        </Grid>
-        <Grid item classes={{root: classes.chipWrapper}}>
-            <Chip label={values.city ? `${values.city}, ${values.state}` : 'City, State'} />
-        </Grid>
-        <Grid item container classes={{root: classes.slotContainer}}>
-            <Slots slot={slot} setSlot={setSlot} />
-        </Grid>
-      </Grid>
+  useEffect(() => {
+    const changed = Object.keys(user.locations[slot]).some(
+      field => values[field] !== user.locations[slot][field]
     )
+
+    setChangesMade(changed)
+  }, [values])
+
+  const fields = {
+    street: {
+      placeholder: "Street",
+      helperText: "invalid address",
+      startAdornment: <img src={streetAdornment} alt="street" />,
+    },
+    zip: {
+      placeholder: "Zip Code",
+      helperText: "invalid zip code",
+      startAdornment: <img src={zipAdornment} alt="zip code" />,
+    },
+  }
+
+  return (
+    <Grid
+      item
+      container
+      direction="column"
+      alignItems="center"
+      xs={6}
+      justifyContent="center"
+      classes={{ root: classes.locationContainer }}
+    >
+      <Grid item>
+        <img
+          src={locationIcon}
+          alt="location setting"
+          className={classes.icon}
+        />
+      </Grid>
+      <Grid
+        item
+        container
+        direction="column"
+        alignItems="center"
+        classes={{ root: classes.fieldContainer }}
+      >
+        <Fields
+          fields={fields}
+          values={values}
+          setValues={setValues}
+          errors={errors}
+          setErrors={setErrors}
+          isWhite
+          disabled={!edit}
+        />
+      </Grid>
+      <Grid item classes={{ root: classes.chipWrapper }}>
+        <Chip
+          label={
+            values.city ? `${values.city}, ${values.state}` : "City, State"
+          }
+        />
+      </Grid>
+      <Grid item container classes={{ root: classes.slotContainer }}>
+        <Slots slot={slot} setSlot={setSlot} />
+      </Grid>
+    </Grid>
+  )
 }

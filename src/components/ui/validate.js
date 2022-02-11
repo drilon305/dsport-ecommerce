@@ -11,7 +11,7 @@ export default function validate(values) {
         password: val => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(val),
         confirmation: val => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(val),
         street: val => /^(\d+) ?([A-Za-z](?= ))? (.*?) ([^ ]+?) ?((?<= )APT)? ?((?<= )\d*)?$/.test(val),
-        zip: val => /^\d{4}(-\d{4})?$/.test(val),
+        zip: val => /^\d{5}(-\d{4})?$/.test(val),
     }
 
     const valid = {}

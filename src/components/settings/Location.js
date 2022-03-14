@@ -22,6 +22,10 @@ const useStyles = makeStyles(theme => ({
     },
     locationContainer: {
         position: 'relative',
+        [theme.breakpoints.down('md')]: {
+          borderBottom: '4px solid #fff',
+          height: '30rem',
+        },
     },
     chipWrapper: {
         marginTop: '2rem',
@@ -110,7 +114,8 @@ export default function Location({
       container
       direction="column"
       alignItems="center"
-      xs={6}
+      lg={6}
+      xs={12}
       justifyContent="center"
       classes={{ root: classes.locationContainer }}
     >

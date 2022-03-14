@@ -34,6 +34,10 @@ const useStyles = makeStyles(theme => ({
     paymentContainer: {
       borderLeft: '4px solid #fff',
       position: 'relative',
+      [theme.breakpoints.down('md')]: {
+        height: '30rem',
+        borderLeft: 0,
+      },
     },
     slotContainer: {
       position: 'absolute',
@@ -52,7 +56,8 @@ export default function Payments({ user,  }) {
     return (
       <Grid item container
         direction="column"
-        xs={6}
+        lg={6}
+        xs={12}
         alignItems="center"
         justifyContent='center'
         classes={{ root: classes.paymentContainer }}>

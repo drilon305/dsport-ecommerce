@@ -34,7 +34,17 @@ const useStyles = makeStyles(theme => ({
       marginLeft: '5rem'
     },
   },
-
+  detailsContainer: {
+    position: 'relative',
+    [theme.breakpoints.down('md')]: {
+      borderBottom: '4px solid #fff',
+      height: '30rem',
+    },
+  },
+  slotContainer: {
+    position: 'absolute',
+    bottom: 0
+  },
     "@global": {
       ".MuiInput-underline:before, .MuiInput-underline:hover:not(.Mui-disabled):before": {
         borderBottom: "2px solid #fff",
@@ -42,13 +52,6 @@ const useStyles = makeStyles(theme => ({
       ".MuiInput-underline:after": {
         borderBottom: `2px solid ${theme.palette.secondary.main}`,
       },
-    },
-    detailsContainer: {
-      position: 'relative',
-    },
-    slotContainer: {
-      position: 'absolute',
-      bottom: 0
     },
 }))
 
@@ -113,7 +116,8 @@ export default function Details({
       item
       container
       direction="column"
-      xs={6}
+      lg={6}
+      xs={12}
       alignItems="center"
       justifyContent="center"
       classes={{ root: classes.detailsContainer }}
@@ -140,6 +144,7 @@ export default function Details({
             setErrors={setErrors}
             isWhite
             disabled={!edit}
+            settings
           />
         </Grid>
       ))}

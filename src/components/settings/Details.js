@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Fields from '../auth/Fields'
@@ -26,12 +27,22 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 10,
   },
   icon: {
-    marginBottom: '3rem'
+    marginBottom: '3rem',
+    [theme.breakpoints.down('xs')]: {
+      marginBottom: '1rem',
+    },
   },
   fieldContainer: {
     marginBottom: '2rem',
     '& > :not(:first-child)': {
       marginLeft: '5rem'
+    },
+    [theme.breakpoints.down('xs')]: {
+      marginBottom: '1rem',
+      '& > :not(:first-child)': {
+        marginLeft: 0,
+        marginTop: '1rem',
+      },
     },
   },
   detailsContainer: {
@@ -68,6 +79,7 @@ export default function Details({
 }) {
   const classes = useStyles()
   const [visible, setVisible] = useState(false)
+  const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'));
 
   
 
@@ -133,8 +145,10 @@ export default function Details({
         <Grid
           container
           justifyContent="center"
+          alignItems={matchesXS ? 'center' : undefined}
           key={i}
           classes={{ root: classes.fieldContainer }}
+          direction={matchesXS ? 'column' : 'row'}
         >
           <Fields
             fields={pair}

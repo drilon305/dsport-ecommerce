@@ -44,7 +44,7 @@ export default function Edit({
   const classes = useStyles()
   const { dispatchFeedback } = useContext(FeedbackContext)
   const [loading, setLoading] = useState(false)
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(true)
 
   const handleEdit = () => {
     if(edit && isError) {

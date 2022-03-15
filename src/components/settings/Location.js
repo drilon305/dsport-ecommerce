@@ -18,7 +18,10 @@ import zipAdornment from '../../images/zip-adornment.svg'
 
 const useStyles = makeStyles(theme => ({
     icon: {
-        marginBottom: '3rem'
+        marginBottom: '3rem',
+        [theme.breakpoints.down('xs')]: {
+          marginBottom: '1rem',
+        },
     },
     locationContainer: {
         position: 'relative',

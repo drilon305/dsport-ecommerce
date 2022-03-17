@@ -97,7 +97,7 @@ export default function MarketingButtons() {
                 <img className={classes.icon} src={button.icon} alt={button.label} />
               </Grid>
               <Grid item>
-                <Typography classes={{root: classes.label}} variant="h1">{button.label}</Typography>
+                <Typography classes={{root: classes.label}} variant="h3">{button.label}</Typography>
               </Grid>
             </Grid>
           </Grid>

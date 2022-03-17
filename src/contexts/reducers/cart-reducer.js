@@ -1,19 +1,19 @@
-import { ADD_TO_CART, REMOVE_FROM_CART, CLEAR_CART } from "../actions/action-types";
+import { ADD_TO_CART, REMOVE_FROM_CART, CLEAR_CART } from "../actions/action-types"
 
-export default function cartReducer(state, action) => {
+export default function cartReducer(state, action) {
     let newCart = [...state]
 
     let existingIndex
 
     if(action.payload) {
-        existingIndex = state.findIndex(item => item.variant === aciton.payload.variant)
+        existingIndex = state.findIndex(item => item.variant === action.payload.variant)
     }
 
     const saveData = cart => {
         localStorage.setItem('cart', JSON.stringify(cart))
     }
 
-    switch(action.type) {
+    switch (action.type) {
         case ADD_TO_CART:
 
         if(existingIndex !== -1) {
@@ -32,11 +32,11 @@ export default function cartReducer(state, action) => {
 
         return newCart
 
-
         case REMOVE_FROM_CART:
+
         const newQty = newCart[existingIndex].qty - action.payload.qty
 
-        if(qty <= 0) {
+        if(newQty <= 0) {
             newCart = newCart.filter(item => item.variant !== action.payload.variant)
         } else {
             newCart = newCart[existingIndex] = { ...newCart[existingIndex], qty: newQty}

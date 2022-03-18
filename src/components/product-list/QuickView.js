@@ -116,15 +116,17 @@ export default function QuickView({
     >
       <DialogContent classes={{ root: classes.selectedFrame }}>
         <Grid container direction="column" alignItems="center">
-          <Grid item component={Link}
+          <Grid
+            item
+            component={Link}
             to={`/${product.node.category.name.toLowerCase()}/${product.node.name
               .split(" ")[0]
-              .toLowerCase()}${hasStyles ? `?style=${variant.style}` : ''}`}>
+              .toLowerCase()}${hasStyles ? `?style=${variant.style}` : ""}`}
+          >
             <img
               src={url}
               alt="product-image"
               className={classes.productImage}
-              
             />
           </Grid>
           <Grid
@@ -142,7 +144,7 @@ export default function QuickView({
                 component={Link}
                 to={`/${product.node.category.name.toLowerCase()}/${product.node.name
                   .split(" ")[0]
-                  .toLowerCase()}${hasStyles ? `?style=${variant.style}` : ''}`}
+                  .toLowerCase()}${hasStyles ? `?style=${variant.style}` : ""}`}
               >
                 <Grid item>
                   <Typography variant="h4">{name}</Typography>
@@ -184,7 +186,12 @@ export default function QuickView({
                   colors={colors}
                 />
                 <span className={classes.qtyContainer}>
-                  <QtyButton stock={stock} selectedVariant={selectedVariant} />
+                  <QtyButton
+                    variants={product.node.variants}
+                    name={name}
+                    stock={stock}
+                    selectedVariant={selectedVariant}
+                  />
                 </span>
               </Grid>
             </Grid>

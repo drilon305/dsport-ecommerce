@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import clsx from 'clsx'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import Badge from "@material-ui/core/Badge"
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import { makeStyles } from '@material-ui/core/styles'
+
+import { CartContext } from '../../contexts'
+import { addToCart } from '../../contexts/actions'
 
 import Cart from '../../images/Cart'
 
@@ -32,77 +36,101 @@ const useStyles = makeStyles(theme => ({
         cartButton: {
             marginLeft: '0 !important'
         },
+        
         minus: {
             marginTop: '-0.25rem'
         },
         minusButton: {
             borderTop: '2px solid #fff'
         },
+        badge: {
+          color: "#fff",
+          fontSize: "1.5rem",
+          backgroundColor: theme.palette.secondary.main,
+          padding: 0,
+        },
 }))
 
-export default function QtyButton({stock, selectedVariant}) {
-    const classes = useStyles()
-    const [qty, setQty] = useState(1)
+export default function QtyButton({ stock, variants, selectedVariant,  name }) {
+  const classes = useStyles()
+  const [qty, setQty] = useState(1)
+  const { cart, dispatchCart } = useContext(CartContext)
 
-    const handleChange = direction => {
-      if(qty === stock[selectedVariant].qty && direction === 'up') {
-        return null
-      }
-
-      if(qty === 1 && direction === 'down') {
-        return null
-      }
-
-      const newQty = direction === 'up' ? qty + 1 : qty -1
-
-      setQty(newQty)
+  const handleChange = direction => {
+    if (qty === stock[selectedVariant].qty && direction === "up") {
+      return null
     }
 
-    useEffect(() => {
-      if(stock === null || stock === -1) {
-        return undefined
-      } else if (qty > stock[selectedVariant].qty) {
-        setQty(stock[selectedVariant].qty)
-      }
+    if (qty === 1 && direction === "down") {
+      return null
+    }
 
-    }, [stock, selectedVariant])
+    const newQty = direction === "up" ? qty + 1 : qty - 1
 
+    setQty(newQty)
+  }
 
-    return (
-      <Grid item>
-        <ButtonGroup classes={{ root: classes.mainGroup }}>
-          <Button classes={{ root: classes.endButtons }}>
+  const handleCart = () => {
+    dispatchCart(
+      addToCart(
+        variants[selectedVariant],
+        qty,
+        name,
+        stock[selectedVariant].qty
+      )
+    )
+  }
+
+  useEffect(() => {
+    if (stock === null || stock === -1) {
+      return undefined
+    } else if (qty > stock[selectedVariant].qty) {
+      setQty(stock[selectedVariant].qty)
+    }
+  }, [stock, selectedVariant])
+
+  return (
+    <Grid item>
+      <ButtonGroup classes={{ root: classes.mainGroup }}>
+        <Button classes={{ root: classes.endButtons }}>
+          <Typography variant="h3" classes={{ root: classes.qtyText }}>
+            {qty}
+          </Typography>
+        </Button>
+        <ButtonGroup orientation="vertical">
+          <Button
+            onClick={() => handleChange("up")}
+            classes={{ root: classes.editButtons }}
+          >
             <Typography variant="h3" classes={{ root: classes.qtyText }}>
-              {qty}
+              +
             </Typography>
           </Button>
-          <ButtonGroup orientation="vertical">
-            <Button
-              onClick={() => handleChange('up')}
-              classes={{ root: classes.editButtons }}
-            >
-              <Typography variant="h3" classes={{ root: classes.qtyText }}>
-                +
-              </Typography>
-            </Button>
-            <Button
-              onClick={() => handleChange('down')}
-              classes={{ root: clsx(classes.editButtons, classes.minusButton) }}
-            >
-              <Typography
-                variant="h3"
-                classes={{ root: clsx(classes.qtyText, classes.minus) }}
-              >
-                -
-              </Typography>
-            </Button>
-          </ButtonGroup>
           <Button
-            classes={{ root: clsx(classes.endButtons, classes.cartButton) }}
+            onClick={() => handleChange("down")}
+            classes={{ root: clsx(classes.editButtons, classes.minusButton) }}
           >
-               <Cart color="#fff" />
+            <Typography
+              variant="h3"
+              classes={{ root: clsx(classes.qtyText, classes.minus) }}
+            >
+              -
+            </Typography>
           </Button>
         </ButtonGroup>
-      </Grid>
-    )
+        <Button
+          onClick={handleCart}
+          classes={{ root: clsx(classes.endButtons, classes.cartButton) }}
+        >
+          <Badge
+            overlap="circle"
+            badgeContent="+"
+            classes={{ badge: classes.badge }}
+          >
+            <Cart color="#fff" />
+          </Badge>
+        </Button>
+      </ButtonGroup>
+    </Grid>
+  )
 }

@@ -193,8 +193,12 @@ export default function Header({ categories }) {
                 component={action.onClick ? undefined : Link}
                 to={action.onClick ? undefined : action.link}
               >
-                {action.alt === 'cart' ? (
-                  <Badge overlap='circle' badgeContent={cart.length} classes={{badge: classes.badge}}>
+                {action.alt === "cart" ? (
+                  <Badge
+                    overlap="circle"
+                    badgeContent={cart.length}
+                    classes={{ badge: classes.badge }}
+                  >
                     {image}
                   </Badge>
                 ) : (

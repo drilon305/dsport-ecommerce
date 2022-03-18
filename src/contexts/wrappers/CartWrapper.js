@@ -7,7 +7,7 @@ export const CartContext = createContext()
 const CartProvider = CartContext.Provider
 
 export function CartWrapper({ children }) {
-    const storedCart = JSON.parse(localStorage.getItem('cart'))
+    const storedCart = JSON.parse(localStorage.getItem("cart"))
     const [cart, dispatchCart] = useReducer(cartReducer, storedCart || [])
 
     return <CartProvider value={{ cart, dispatchCart }}>

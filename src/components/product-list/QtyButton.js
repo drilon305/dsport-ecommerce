@@ -8,7 +8,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { CartContext } from '../../contexts'
-import { addToCart } from '../../contexts/actions'
+import { addToCart } from "../../contexts/actions"
 
 import Cart from '../../images/Cart'
 
@@ -34,7 +34,8 @@ const useStyles = makeStyles(theme => ({
             border: 'none'
         },
         cartButton: {
-            marginLeft: '0 !important'
+            marginLeft: '0 !important',
+            transition: 'background-color 1s ease'
         },
         
         minus: {
@@ -49,11 +50,18 @@ const useStyles = makeStyles(theme => ({
           backgroundColor: theme.palette.secondary.main,
           padding: 0,
         },
+        success: {
+          backgroundColor: theme.palette.success.main,
+          "&:hover": {
+            backgroundColor: theme.palette.success.main,
+          }
+        }
 }))
 
 export default function QtyButton({ stock, variants, selectedVariant,  name }) {
   const classes = useStyles()
   const [qty, setQty] = useState(1)
+  const [success, setSuccess] = useState(false)
   const { cart, dispatchCart } = useContext(CartContext)
 
   const handleChange = direction => {
@@ -71,6 +79,8 @@ export default function QtyButton({ stock, variants, selectedVariant,  name }) {
   }
 
   const handleCart = () => {
+    setSuccess(true)
+
     dispatchCart(
       addToCart(
         variants[selectedVariant],
@@ -88,6 +98,17 @@ export default function QtyButton({ stock, variants, selectedVariant,  name }) {
       setQty(stock[selectedVariant].qty)
     }
   }, [stock, selectedVariant])
+
+  useEffect(() => {
+    let timer
+
+    if(success) {
+      timer = setTimeout(() => setSuccess(false), 1500)
+    }
+
+    return () => clearTimeout(timer)
+
+  }, [success])
 
   return (
     <Grid item>
@@ -120,15 +141,22 @@ export default function QtyButton({ stock, variants, selectedVariant,  name }) {
         </ButtonGroup>
         <Button
           onClick={handleCart}
-          classes={{ root: clsx(classes.endButtons, classes.cartButton) }}
+          classes={{ root: clsx(classes.endButtons, classes.cartButton, {
+            [classes.success]: success
+          }) }}
         >
-          <Badge
-            overlap="circle"
-            badgeContent="+"
-            classes={{ badge: classes.badge }}
-          >
-            <Cart color="#fff" />
-          </Badge>
+          {success ? <Typography variant='h3' classes={{ root: classes.qtyText }}>
+            ✓
+          </Typography> : (
+            <Badge
+              overlap="circle"
+              badgeContent="+"
+              classes={{ badge: classes.badge }}
+            >
+              <Cart color="#fff" />
+            </Badge>
+          )}
+
         </Button>
       </ButtonGroup>
     </Grid>

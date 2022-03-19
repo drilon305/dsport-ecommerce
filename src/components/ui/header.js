@@ -16,14 +16,12 @@ import ListItemText from '@material-ui/core/ListItemText'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link, navigate} from 'gatsby'
 
-import { CartContext } from '../../contexts'
+import { CartContext } from "../../contexts"
 
 import search from '../../images/search.svg'
 import cartIcon from '../../images/cart.svg'
 import account from '../../images/account-header.svg'
 import menu from '../../images/menu.svg'
-
-
 
 
 const useStyles = makeStyles(theme => ({

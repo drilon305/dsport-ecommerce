@@ -11,7 +11,9 @@ import CartItems from '../components/cart/CartItems'
 import { UserContext } from '../contexts'
 
 const useStyles = makeStyles(theme => ({
-
+  cartContainer: {
+    minHeight: '70vh',
+  },
 }))
 
 export default function Cart() {
@@ -20,13 +22,13 @@ export default function Cart() {
 
   return (
     <Layout>
-      <Grid container direction="column" alignItems="center">
+      <Grid container direction="column" alignItems="center" classes={{root: classes.cartContainer}}>
         <Grid item>
           <Typography variant="h1">{user.username}'s Cart</Typography>
         </Grid>
         <Grid item container>
             <CartItems />
-            <CheckoutPortal />
+            <CheckoutPortal user={user} />
         </Grid>
       </Grid>
     </Layout>

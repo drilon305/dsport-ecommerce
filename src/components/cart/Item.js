@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Chip from '@material-ui/core/Chip'
 import IconButton  from '@material-ui/core/IconButton'
@@ -6,6 +6,8 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 
 import QtyButton from '../product-list/QtyButton'
+import { CartContext } from '../../contexts'
+import { removeFromCart } from "../../contexts/actions"
 
 import FavoriteIcon from '../../images/Favorite'
 import SubscribeIcon from '../../images/Subscription'
@@ -41,20 +43,31 @@ const useStyles = makeStyles(theme => ({
     itemContainer: {
         margin: '2rem 0 2rem 2rem',
     },
+    actionButton: {
+    "&:hover": {
+      backgroundColor: 'transparent',
+    },
+  },
 }))
 
 export default function Item({ item }) {
   const classes = useStyles()
   const theme = useTheme()
+  const { dispatchCart } = useContext(CartContext)
+
+  const handleDelete = () => {
+    dispatchCart(removeFromCart(item.variant, item.qty))
+}
 
   const actions = [
     { icon: FavoriteIcon, color: theme.palette.secondary.main },
     { icon: SubscribeIcon, color: theme.palette.secondary.main },
-    { icon: DeleteIcon, color: theme.palette.error.main, size: "2.5rem" },
+    { icon: DeleteIcon, color: theme.palette.error.main, size: "2.5rem", onClick: handleDelete },
   ]
 
+ 
   return (
-    <Grid item container classes={{root: classes.itemContainer}}>
+    <Grid item container classes={{ root: classes.itemContainer }}>
       <Grid item>
         <img
           className={classes.productImage}
@@ -66,8 +79,9 @@ export default function Item({ item }) {
         item
         container
         direction="column"
-        justifyContent='space-between'
-        classes={{ root: classes.infoContainer }}>
+        justifyContent="space-between"
+        classes={{ root: classes.infoContainer }}
+      >
         <Grid item container justifyContent="space-between">
           <Grid item>
             <Typography variant="h5" classes={{ root: classes.name }}>
@@ -84,19 +98,28 @@ export default function Item({ item }) {
             />
           </Grid>
         </Grid>
-        <Grid item classes={{root: classes.chipWrapper}}>
+        <Grid item classes={{ root: classes.chipWrapper }}>
           <Chip label={`$${item.variant.price}`} />
         </Grid>
-        <Grid item container justifyContent="space-between" alignItems='flex-end'>
+        <Grid
+          item
+          container
+          justifyContent="space-between"
+          alignItems="flex-end"
+        >
           <Grid item xs>
             <Typography variant="body1" classes={{ root: classes.id }}>
               ID: {item.variant.id}
             </Typography>
           </Grid>
-          <Grid item container justifyContent='flex-end' xs>
+          <Grid item container justifyContent="flex-end" xs>
             {actions.map((action, i) => (
               <Grid item key={i}>
-                <IconButton>
+                <IconButton
+                  onClick={() => action.onClick()}
+                  disableRipple
+                  classes={{ root: classes.actionButton }}
+                >
                   <span
                     className={classes.actionWrapper}
                     style={{ height: action.size, width: action.size }}

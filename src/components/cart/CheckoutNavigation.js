@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles'
 const useStyles = makeStyles(theme => ({
     navbar: {
         backgroundColor: theme.palette.secondary.main,
-        width: '35rem',
+        width: '40rem',
         height: '5rem',
     },
     back: {

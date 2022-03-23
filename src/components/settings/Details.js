@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import clsx from 'clsx'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -27,7 +30,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 10,
   },
   icon: {
-    marginBottom: '3rem',
+    marginTop: ({ checkout }) => checkout ? '-2rem' : undefined,
+    marginBottom: ({ checkout }) => checkout ? '1rem' : '3rem',
     [theme.breakpoints.down('xs')]: {
       marginBottom: '1rem',
     },
@@ -54,7 +58,19 @@ const useStyles = makeStyles(theme => ({
   },
   slotContainer: {
     position: 'absolute',
-    bottom: 0
+    bottom: ({ checkout }) => checkout ? -8 :  0
+  },
+  checkoutContainer: {
+    '& > *': {
+      marginBottom: '1rem',
+    },
+  },
+  switchWrapper: {
+    marginRight: 4,
+  },
+  switchLabel: {
+    color: '#fff',
+    fontWeight: 600,
   },
     "@global": {
       ".MuiInput-underline:before, .MuiInput-underline:hover:not(.Mui-disabled):before": {
@@ -76,9 +92,11 @@ export default function Details({
   setSlot,
   errors,
   setErrors,
-  checkout
+  checkout,
+  billing,
+  setBilling
 }) {
-  const classes = useStyles()
+  const classes = useStyles({ checkout })
   const [visible, setVisible] = useState(false)
   const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'));
 
@@ -142,7 +160,7 @@ export default function Details({
       item
       container
       direction="column"
-      lg={6}
+      lg={checkout ? 12 : 6}
       xs={12}
       alignItems="center"
       justifyContent="center"
@@ -159,10 +177,15 @@ export default function Details({
         <Grid
           container
           justifyContent="center"
-          alignItems={matchesXS ? 'center' : undefined}
+          alignItems={matchesXS || checkout ? "center" : undefined}
           key={i}
-          classes={{ root: classes.fieldContainer }}
-          direction={matchesXS ? 'column' : 'row'}
+          classes={{
+            root: clsx({
+              [classes.checkoutContainer]: checkout,
+              [classes.fieldContainer]: !checkout,
+            }),
+          }}
+          direction={matchesXS || checkout ? "column" : "row"}
         >
           <Fields
             fields={pair}
@@ -172,12 +195,33 @@ export default function Details({
             setErrors={setErrors}
             isWhite
             disabled={checkout ? false : !edit}
-            settings
+            settings={!checkout}
           />
         </Grid>
       ))}
-      <Grid item container classes={{ root: classes.slotContainer }}>
-        <Slots slot={slot} setSlot={setSlot} />
+      <Grid
+        item
+        container
+        justifyContent={checkout ? "space-between" : undefined}
+        classes={{ root: classes.slotContainer }}
+      >
+        <Slots slot={slot} setSlot={setSlot} checkout={checkout} />
+        {checkout && (
+          <Grid item>
+            <FormControlLabel
+            classes={{root: classes.switchWrapper, label: classes.switchLabel}}
+              label="Billing"
+              labelPlacement="start"
+              control={
+                <Switch
+                  checked={billing}
+                  onChange={() => setBilling(!billing)}
+                  color="secondary"
+                />
+              }
+            />
+          </Grid>
+        )}
       </Grid>
     </Grid>
   )

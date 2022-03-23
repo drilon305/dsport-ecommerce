@@ -8,7 +8,7 @@ import Details from '../settings/Details'
 
 const useStyles = makeStyles(theme => ({
     stepContainer: {    
-        width: '35rem',
+        width: '40rem',
         height: '25rem',
         backgroundColor: theme.palette.primary.main,
     },
@@ -19,11 +19,12 @@ export default function CheckoutPortal({ user }) {
     const [selectedStep, setSelectedStep] = useState(0)
     const [detailValues, setDetailValues] = useState({name: '', email: '', phone: ''})
     const [detailSlot, setDetailSlot] = useState(0)
+    const [detailBilling, setDetailBilling] = useState(false)
     const [errors, setErrors] = useState({})
 
     const steps = [
       { title: "Contact Info", component: <Details user={user} values={detailValues} setValues={setDetailValues} 
-     slot={detailSlot} setSlot={setDetailSlot} errors={errors} setErrors={setErrors} checkout /> },
+     slot={detailSlot} setSlot={setDetailSlot} errors={errors} setErrors={setErrors} checkout billing={detailBilling} setBilling={setDetailBilling} /> },
       { title: "Address" },
       { title: "Shipping" },
       { title: "Payment" },

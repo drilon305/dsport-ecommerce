@@ -32,6 +32,7 @@ export default function Settings({ setSelectedSetting}) {
       })
        const [detailSlot, setDetailSlot] = useState(0) 
        const [detailErrors, setDetailErrors] = useState({})
+       const [billingSlot, setBillingSlot] = useState(0)
 
 
       const [locationValues, setLocationValues] = useState({
@@ -69,7 +70,7 @@ setDetailErrors({})
             setErrors={setDetailErrors}
             setSlot={setDetailSlot}
           />
-          <Payments user={user} edit={edit} />
+          <Payments user={user} edit={edit} slot={billingSlot} setSlot={setBillingSlot} />
         </Grid>
         <Grid
           container

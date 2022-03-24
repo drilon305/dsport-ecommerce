@@ -52,7 +52,6 @@ const useStyles = makeStyles(theme => ({
       color: '#fff',
       fontWeight: 600,
     },
-    
 }))
 
 export default function Location({

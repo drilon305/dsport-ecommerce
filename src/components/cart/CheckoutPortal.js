@@ -8,6 +8,7 @@ import Details from '../settings/Details'
 import Location from '../settings/Location'
 import Shipping from './Shipping'
 import Payments from '../settings/Payments'
+import Confirmation from './Confirmation'
 
 const useStyles = makeStyles(theme => ({
     stepContainer: {    
@@ -92,7 +93,7 @@ export default function CheckoutPortal({ user }) {
      setSelectedShipping={setSelectedShipping} shippingOptions={shippingOptions} /> },
     { title: "Payment", component: <Payments slot={billingSlot} setSlot={setBillingSlot} user={user}
      checkout saveCard={saveCard} setSaveCard={setSaveCard} /> },
-    { title: "Confirmation" },
+    { title: "Confirmation", component: <Confirmation /> },
     { title: `Thanks, ${user.username}!` },
   ]
 

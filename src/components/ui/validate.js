@@ -12,6 +12,8 @@ export default function validate(values) {
         confirmation: val => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(val),
         street: val => /^(\d+) ?([A-Za-z](?= ))? (.*?) ([^ ]+?) ?((?<= )APT)? ?((?<= )\d*)?$/.test(val),
         zip: val => /^\d{5}(-\d{4})?$/.test(val),
+        city: val => val.length !== 0,
+        state: val =>  val.length !== 0,
         promo: val => true
     }
 

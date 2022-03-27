@@ -16,28 +16,45 @@ const useStyles = makeStyles(theme => ({
     forward: {
         visibility: ({ steps, selectedStep }) => selectedStep >= steps.length - 2 ? 'hidden' : 'visible',
     },
+    disabled: {
+      opacity: 0.5,
+    },
 }))
 
-export default function CheckoutNavigation({ steps, selectedStep, setSelectedStep }) {
-    const classes = useStyles({ selectedStep, steps })
+export default function CheckoutNavigation({
+  steps,
+  selectedStep,
+  setSelectedStep,
+}) {
+  const classes = useStyles({ selectedStep, steps })
 
-    return (
-      <Grid item container justifyContent='center' alignItems='center' classes={{ root: classes.navbar }}>
-        <Grid item classes={{root: classes.back}}>
-            <Button onClick={() => setSelectedStep(selectedStep - 1)}>
+  return (
+    <Grid
+      item
+      container
+      justifyContent="center"
+      alignItems="center"
+      classes={{ root: classes.navbar }}
+    >
+      <Grid item classes={{ root: classes.back }}>
+        <Button onClick={() => setSelectedStep(selectedStep - 1)}>
           <Typography variant="h5">{"<"}</Typography>
-          </Button>
-        </Grid>
-        <Grid item>
-          <Typography variant="h5">
-            {steps[selectedStep].title.toUpperCase()}
-          </Typography>
-        </Grid>
-        <Grid item classes={{root: classes.forward}}>
-        <Button onClick={() => setSelectedStep(selectedStep + 1)}>
-          <Typography variant="h5">{">"}</Typography>
-          </Button>
-        </Grid>
+        </Button>
       </Grid>
-    )
+      <Grid item>
+        <Typography variant="h5">
+          {steps[selectedStep].title.toUpperCase()}
+        </Typography>
+      </Grid>
+      <Grid item classes={{ root: classes.forward }}>
+        <Button
+          disabled={steps[selectedStep].error}
+          classes={{ disabled: classes.disabled }}
+          onClick={() => setSelectedStep(selectedStep + 1)}
+        >
+          <Typography variant="h5">{">"}</Typography>
+        </Button>
+      </Grid>
+    </Grid>
+  )
 }

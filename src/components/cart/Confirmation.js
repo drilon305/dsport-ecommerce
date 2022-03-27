@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import Grid from '@material-ui/core/Grid'
+import clsx from 'clsx'
+import Button from '@material-ui/core/Button'
+import Chip from '@material-ui/core/Chip'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -39,6 +42,52 @@ const useStyles = makeStyles(theme => ({
     },
     priceLabel: {
         fontSize: '1.5rem',
+    },
+    darkBackground: {
+      backgroundColor: theme.palette.secondary.main,
+    },
+    fieldRow: {
+      height: '2.5rem',
+    },
+    iconWrapper: {
+      display: 'flex',
+      justifyContent:'center',
+      alignItems: 'center'
+    },
+    centerText: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    adornmentWrapper: {
+      display: 'flex',
+      justifyContent: 'center'
+    },
+    priceValue: {
+      marginRight: '1rem',
+    },
+    fieldWrapper: {
+      marginLeft: '1.2rem',
+    },
+    button: {
+      width: '100%',
+      height: '7rem',
+      borderRadius: 0,
+      backgroundColor: theme.palette.secondary.main,
+      "&:hover": {
+        backgroundColor: theme.palette.secondary.light,
+      },
+    },
+    buttonWrapper: {
+      marginTop: 'auto',
+    },
+    mainContainer: {
+      height: '100%',
+    },
+    chipRoot: {
+      backgroundColor: '#fff',
+    },
+    chipLabel: {
+      color: theme.palette.secondary.main,
     },
 }))
 
@@ -85,7 +134,9 @@ export default function Confirmation() {
     },
     {
       value: "**** **** **** 1234",
-      adornment: <img src={cardAdornment} alt="credit card" className={classes.card} />,
+      adornment: (
+        <img src={cardAdornment} alt="credit card" className={classes.card} />
+      ),
     },
     {
       promo: {
@@ -113,10 +164,10 @@ export default function Confirmation() {
 
   const adornmentValue = (adornment, value) => (
     <>
-      <Grid item xs={1}>
+      <Grid item xs={2} classes={{ root: classes.adornmentWrapper }}>
         {adornment}
       </Grid>
-      <Grid item xs={11}>
+      <Grid item xs={10} classes={{ root: classes.centerText }}>
         <Typography variant="body1" classes={{ root: classes.text }}>
           {value}
         </Typography>
@@ -125,49 +176,95 @@ export default function Confirmation() {
   )
 
   return (
-    <Grid item container direction="column">
+    <Grid
+      item
+      container
+      direction="column"
+      classes={{ root: classes.mainContainer }}
+    >
       <Grid item container>
-        <Grid item container direction="column" xs={8}>
-          {firstFields.map(field => (
-            <Grid item container key={field.label}>
+        <Grid item container direction="column" xs={7}>
+          {firstFields.map((field, i) => (
+            <Grid
+              item
+              container
+              key={field.label}
+              alignItems="center"
+              classes={{
+                root: clsx(classes.fieldRow, {
+                  [classes.darkBackground]: i % 2 !== 0,
+                }),
+              }}
+            >
               {adornmentValue(field.adornment, field.value)}
             </Grid>
           ))}
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={5} classes={{ root: classes.iconWrapper }}>
           <img src={confirmationIcon} alt="confirmation" />
         </Grid>
       </Grid>
       {secondFields.map((field, i) => (
-        <Grid item container key={i}>
-        <Grid item xs={6}>
-        {field.promo ? (
-              <Fields
-                fields={field}
-                values={promo}
-                setValues={setPromo}
-                errors={promoError}
-                setErrors={setPromoError}
-                isWhite
-              />
+        <Grid
+          item
+          container
+          key={i}
+          alignItems="center"
+          classes={{
+            root: clsx(classes.fieldRow, {
+              [classes.darkBackground]: i % 2 !== 0,
+            }),
+          }}
+        >
+          <Grid item container xs={7}>
+            {field.promo ? (
+              <span className={classes.fieldWrapper}>
+                <Fields
+                  fields={field}
+                  values={promo}
+                  setValues={setPromo}
+                  errors={promoError}
+                  setErrors={setPromoError}
+                  isWhite
+                />
+              </span>
             ) : (
               adornmentValue(field.adornment, field.value)
             )}
-        </Grid>
-        <Grid item container xs={6}>
-         <Grid item xs={6}>
-            <Typography variant='h5' classes={{root: classes.priceLabel}}>
+          </Grid>
+          <Grid item container xs={5}>
+            <Grid item xs={6}>
+              <Typography variant="h5" classes={{ root: classes.priceLabel }}>
                 {prices[i].label}
-            </Typography>
-         </Grid>
-         <Grid item xs={6}>
-                <Typography variant='body2'>
-                    {prices[i].value}
-                </Typography>
-        </Grid>
-       </Grid>
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography
+                align="right"
+                variant="body2"
+                classes={{ root: classes.priceValue }}
+              >
+                {`$${prices[i].value}`}
+              </Typography>
+            </Grid>
+          </Grid>
         </Grid>
       ))}
+      <Grid item classes={{ root: classes.buttonWrapper }}>
+        <Button classes={{ root: classes.button }}>
+          <Grid container justifyContent="space-around" alignItems='center'>
+            <Grid item>
+              <Typography variant="h5">PLACE ORDER</Typography>
+            </Grid>
+            <Grid item>
+              <Chip
+                label="$149.99"
+                classes={{ root: classes.chipRoot, label: classes.chipLabel }}
+              />
+            </Grid>
+          </Grid>
+        </Button>
+      </Grid>
     </Grid>
   )
 }

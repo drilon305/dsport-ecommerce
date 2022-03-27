@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
@@ -9,6 +9,7 @@ import Location from '../settings/Location'
 import Shipping from './Shipping'
 import Payments from '../settings/Payments'
 import Confirmation from './Confirmation'
+import validate from '../ui/validate'
 
 const useStyles = makeStyles(theme => ({
     stepContainer: {    
@@ -49,10 +50,19 @@ export default function CheckoutPortal({ user }) {
 
   const [errors, setErrors] = useState({})
 
+
   const [selectedShipping, setSelectedShipping] = useState(null)
   
   const shippingOptions = [{ label: 'FREE SHIPPING', price: 0}, { label: '2-DAY SHIPPING', price: 5.99}, 
   { label: 'OVERNIGHT SHIPPING', price: 19.99}]
+
+  const errorHelper = values => {
+    const valid = validate(values)
+
+    return Object.keys(valid).some(value => !valid[value])
+  }
+
+ 
 
   const steps = [
     {
@@ -71,6 +81,7 @@ export default function CheckoutPortal({ user }) {
           setBilling={setDetailBilling}
         />
       ),
+      error: errorHelper(detailValues),
     },
     {
       title: "Address",
@@ -88,14 +99,40 @@ export default function CheckoutPortal({ user }) {
           checkout
         />
       ),
+      error: errorHelper(locationValues),
     },
-    { title: "Shipping", component: <Shipping selectedShipping={selectedShipping}
-     setSelectedShipping={setSelectedShipping} shippingOptions={shippingOptions} /> },
-    { title: "Payment", component: <Payments slot={billingSlot} setSlot={setBillingSlot} user={user}
-     checkout saveCard={saveCard} setSaveCard={setSaveCard} /> },
+    {
+      title: "Shipping",
+      component: (
+        <Shipping
+          selectedShipping={selectedShipping}
+          setSelectedShipping={setSelectedShipping}
+          shippingOptions={shippingOptions}
+        />
+      ),
+      error: selectedShipping === null
+    },
+    {
+      title: "Payment",
+      component: (
+        <Payments
+          slot={billingSlot}
+          setSlot={setBillingSlot}
+          user={user}
+          checkout
+          saveCard={saveCard}
+          setSaveCard={setSaveCard}
+        />
+      ),
+      error: false,
+    },
     { title: "Confirmation", component: <Confirmation /> },
     { title: `Thanks, ${user.username}!` },
   ]
+
+  useEffect(() => {
+    setErrors({})
+  }, [detailSlot, locationSlot])
 
   return (
     <Grid item container alignItems="flex-end" direction="column" xs={6}>

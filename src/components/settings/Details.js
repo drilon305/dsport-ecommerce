@@ -94,7 +94,8 @@ export default function Details({
   setErrors,
   checkout,
   billing,
-  setBilling
+  setBilling,
+  noSlots
 }) {
   const classes = useStyles({ checkout })
   const [visible, setVisible] = useState(false)
@@ -102,6 +103,8 @@ export default function Details({
 
 
   useEffect(() => {
+    if(noSlots) return
+
     if(checkout) {
       setValues(user.contactInfo[slot])
     } else {
@@ -199,7 +202,8 @@ export default function Details({
           />
         </Grid>
       ))}
-      <Grid
+      {noSlots ? null : (
+        <Grid
         item
         container
         justifyContent={checkout ? "space-between" : undefined}
@@ -223,6 +227,7 @@ export default function Details({
           </Grid>
         )}
       </Grid>
+      )} 
     </Grid>
   )
 }

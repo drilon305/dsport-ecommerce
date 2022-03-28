@@ -66,7 +66,8 @@ export default function Location({
   setErrors,
   checkout,
   billing,
-  setBilling
+  setBilling,
+  noSlots
 }) {
   const classes = useStyles({ checkout })
   const [loading, setLoading] = useState(false)
@@ -91,6 +92,8 @@ export default function Location({
   }
 
   useEffect(() => {
+    if(noSlots) return
+
     setValues(user.locations[slot])
   }, [slot])
 
@@ -172,7 +175,8 @@ export default function Location({
         )}
         
       </Grid>
-      <Grid item  container justifyContent='space-between' classes={{ root: classes.slotContainer }}>
+      {noSlots ? null : (
+        <Grid item  container justifyContent='space-between' classes={{ root: classes.slotContainer }}>
         <Slots slot={slot} setSlot={setSlot} checkout={checkout} />
         {checkout && (
           <Grid item>
@@ -191,6 +195,7 @@ export default function Location({
           </Grid>
         )}
       </Grid>
+      )}
     </Grid>
   )
 }

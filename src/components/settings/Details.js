@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import clsx from 'clsx'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
@@ -95,9 +95,12 @@ export default function Details({
   checkout,
   billing,
   setBilling,
-  noSlots
+  noSlots,
+  billingValues,
+  setBillingValues
 }) {
   const classes = useStyles({ checkout })
+  const isMounted = useRef(false)
   const [visible, setVisible] = useState(false)
   const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'));
 
@@ -121,6 +124,19 @@ export default function Details({
 
      setChangesMade(changed)
   }, [values])
+
+  useEffect(() => {
+    if (isMounted.current === false) {
+      isMounted.current = true
+      return
+    }
+
+    if(billing === false && isMounted.current) {
+      setValues(billingValues)
+    } else {
+      setBillingValues(values)
+    }
+  }, [billing])
 
   const email_password = EmailPassword(
     false,
@@ -192,8 +208,8 @@ export default function Details({
         >
           <Fields
             fields={pair}
-            values={values}
-            setValues={setValues}
+            values={billing === slot ? billingValues : values}
+            setValues={billing === slot ? setBillingValues : setValues}
             errors={errors}
             setErrors={setErrors}
             isWhite
@@ -218,8 +234,8 @@ export default function Details({
               labelPlacement="start"
               control={
                 <Switch
-                  checked={billing}
-                  onChange={() => setBilling(!billing)}
+                  checked={billing === slot}
+                  onChange={() => setBilling(billing === slot ? false : slot)}
                   color="secondary"
                 />
               }

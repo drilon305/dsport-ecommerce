@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import Grid from '@material-ui/core/Grid'
 import axios from 'axios'
 import Chip from '@material-ui/core/Chip'
@@ -67,9 +67,12 @@ export default function Location({
   checkout,
   billing,
   setBilling,
-  noSlots
+  noSlots,
+  billingValues,
+  setBillingValues
 }) {
   const classes = useStyles({ checkout })
+  const isMounted = useRef(false)
   const [loading, setLoading] = useState(false)
   const { dispatchFeedback } = useContext(FeedbackContext)
 
@@ -117,6 +120,19 @@ export default function Location({
     }
   }, [values])
 
+  useEffect(() => {
+    if (isMounted.current === false) {
+      isMounted.current = true
+      return
+    }
+
+    if(billing === false && isMounted.current) {
+      setValues(billingValues)
+    } else {
+      setBillingValues(values)
+    }
+  }, [billing])
+
   const fields = {
     street: {
       placeholder: "Street",
@@ -157,8 +173,8 @@ export default function Location({
       >
         <Fields
           fields={fields}
-          values={values}
-          setValues={setValues}
+          values={billing === slot ? billingValues : values}
+          setValues={billing === slot ? setBillingValues : setValues}
           errors={errors}
           setErrors={setErrors}
           isWhite
@@ -186,8 +202,8 @@ export default function Location({
               labelPlacement="start"
               control={
                 <Switch
-                  checked={billing}
-                  onChange={() => setBilling(!billing)}
+                  checked={billing === slot}
+                  onChange={() => setBilling(billing === slot ? false : slot)}
                   color="secondary"
                 />
               }

@@ -121,6 +121,11 @@ export default function Location({
   }, [values])
 
   useEffect(() => {
+    if(noSlots) {
+      isMounted.current = false
+      return
+    }
+
     if (isMounted.current === false) {
       isMounted.current = true
       return
@@ -173,8 +178,8 @@ export default function Location({
       >
         <Fields
           fields={fields}
-          values={billing === slot ? billingValues : values}
-          setValues={billing === slot ? setBillingValues : setValues}
+          values={billing === slot && !noSlots ? billingValues : values}
+          setValues={billing === slot && !noSlots ? setBillingValues : setValues}
           errors={errors}
           setErrors={setErrors}
           isWhite

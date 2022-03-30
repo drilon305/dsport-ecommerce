@@ -67,10 +67,32 @@ export default function CheckoutPortal({ user }) {
   const shippingOptions = [{ label: 'FREE SHIPPING', price: 0}, { label: '2-DAY SHIPPING', price: 5.99}, 
   { label: 'OVERNIGHT SHIPPING', price: 19.99}]
 
-  const errorHelper = values => {
+  const errorHelper = (values, forBilling, billingValues, slot) => {
     const valid = validate(values)
+    
 
-    return Object.keys(valid).some(value => !valid[value])
+    // If we have one slot marked as billing..
+    if(forBilling !== false && forBilling !== undefined) {
+      //.. validate billing values
+      const billingValid = validate(billingValues)
+
+      //If we are currently on the same slot as marked for billing, ie billing and shipping are the shame.. 
+      if(forBilling === slot) {
+        //.. then we just need to validate the one set of values because they are the same 
+        return Object.keys(billingValid).some(value => !billingValid[value])
+      } else {
+        //Othervise, if we are currently on a different slot than the slot marked for billing, 
+        //ie billing and shipping are different, then we need to validate both the billing values and shipping values
+        return Object.keys(billingValid).some(value => !billingValid[value]) || Object.keys(valid).some(value => !valid[value])
+
+      }
+
+    } else {
+      //if no slots were marked for billing, just validate current slot
+      return Object.keys(valid).some(value => !valid[value])
+    }
+
+    
   }
 
  
@@ -94,7 +116,7 @@ export default function CheckoutPortal({ user }) {
           setBillingValues={setBillingDetails}
         />
       ),
-      error: errorHelper(detailValues),
+      error: errorHelper(detailValues, detailForBilling, billingDetails, detailSlot),
     },
     {
       title: "Billing Info",
@@ -128,7 +150,7 @@ export default function CheckoutPortal({ user }) {
           checkout
         />
       ),
-      error: errorHelper(locationValues),
+      error: errorHelper(locationValues, locationForBilling, billingLocation, locationSlot),
     },
     {
       title: "Billing Address",

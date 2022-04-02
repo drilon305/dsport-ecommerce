@@ -48,9 +48,11 @@ export default function CheckoutNavigation({
   selectedStep,
   setSelectedStep,
   details,
+  setDetails,
   detailSlot,
   location,
-  locationSlot
+  locationSlot,
+  setLocation
 }) {
   const classes = useStyles({ selectedStep, steps })
   const [loading, setLoading] = useState(null)
@@ -58,31 +60,63 @@ export default function CheckoutNavigation({
   const { user, dispatchUser } = useContext(UserContext)
 
   const handleAction = action => {
-    if(steps[selectedStep].error) {
-      dispatchFeedback(setSnackbar({ status: 'error', message: 'All fields must be valid before saving'}))
+    if (steps[selectedStep].error) {
+      dispatchFeedback(
+        setSnackbar({
+          status: "error",
+          message: "All fields must be valid before saving",
+        })
+      )
       return
     }
 
     setLoading(action)
 
-    const isDetails = steps[selectedStep].title === 'Contact Info'
-    const isLocation = steps[selectedStep].title === 'Address'
+    const isDetails = steps[selectedStep].title === "Contact Info"
+    const isLocation = steps[selectedStep].title === "Address"
 
-    axios.post(process.env.GATSBY_STRAPI_URL + '/users-permissions/set-settings', {
-      details: isDetails ? details : undefined,
-      detailSlot: isDetails ? detailSlot : undefined,
-      location: isLocation ? location : undefined,
-      locationSlot: isLocation ? locationSlot : undefined
-    }, {
-      headers: { Authorization: `Bearer ${user.jwt}` }
-    }).then(res => {
-      setLoading(null)
-      dispatchFeedback(setSnackbar({ status: 'success', message: 'Information Saved Successfully.'}))
-      dispatchUser(setUser({ ...res.data, jwt: user.jwt, onboarding: true}))
-    }).catch(error => {
-      setLoading(null)
-      dispatchFeedback(setSnackbar({ status: 'error', message: 'There was a problem saving your information, please try again.'}))
-    })
+    axios
+      .post(
+        process.env.GATSBY_STRAPI_URL + "/users-permissions/set-settings",
+        {
+          details: isDetails && action !== "delete" ? details : undefined,
+          detailSlot: isDetails ? detailSlot : undefined,
+          location: isLocation && action !== "delete" ? location : undefined,
+          locationSlot: isLocation ? locationSlot : undefined,
+        },
+        {
+          headers: { Authorization: `Bearer ${user.jwt}` },
+        }
+      )
+      .then(res => {
+        setLoading(null)
+        dispatchFeedback(
+          setSnackbar({
+            status: "success",
+            message: `Information ${action === 'delete' ? 'Deleted' : 'Saved'} Successfully.`,
+          })
+        )
+        dispatchUser(setUser({ ...res.data, jwt: user.jwt, onboarding: true }))
+
+        if(action === 'delete') {
+          if(isDetails) {
+            setDetails({ name: '', email: '', phone: ''})
+          } else if (isLocation) {
+            setLocation({ street: '', zip: '', city: '', zip: '', state: ''})
+          }
+
+        }
+      })
+      .catch(error => {
+        setLoading(null)
+        dispatchFeedback(
+          setSnackbar({
+            status: "error",
+            message:
+              `There was a problem ${action === 'delete' ? 'deleting' : 'saving'} your information, please try again.`,
+          })
+        )
+      })
   }
 
   return (
@@ -116,19 +150,24 @@ export default function CheckoutNavigation({
         <Grid item classes={{ root: classes.actions }}>
           <Grid container>
             <Grid item>
-              {loading === 'save' ? <CircularProgress /> : (
-                <IconButton onClick={() => handleAction('save')}>
+              {loading === "save" ? (
+                <CircularProgress />
+              ) : (
+                <IconButton onClick={() => handleAction("save")}>
                   <img src={save} alt="save" className={classes.icon} />
                 </IconButton>
               )}
-
             </Grid>
             <Grid item>
-              <IconButton>
-                <span className={classes.delete}>
-                  <Delete color="#fff" />
-                </span>
-              </IconButton>
+              {loading === "delete" ? (
+                <CircularProgress />
+              ) : (
+                <IconButton onClick={() => handleAction("delete")}>
+                  <span className={classes.delete}>
+                    <Delete color="#fff" />
+                  </span>
+                </IconButton>
+              )}
             </Grid>
           </Grid>
         </Grid>

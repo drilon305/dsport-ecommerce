@@ -52,7 +52,8 @@ export default function CheckoutNavigation({
   detailSlot,
   location,
   locationSlot,
-  setLocation
+  setLocation,
+  setErrors
 }) {
   const classes = useStyles({ selectedStep, steps })
   const [loading, setLoading] = useState(null)
@@ -60,7 +61,7 @@ export default function CheckoutNavigation({
   const { user, dispatchUser } = useContext(UserContext)
 
   const handleAction = action => {
-    if (steps[selectedStep].error) {
+    if (steps[selectedStep].error && action !== 'delete') {
       dispatchFeedback(
         setSnackbar({
           status: "error",
@@ -99,6 +100,7 @@ export default function CheckoutNavigation({
         dispatchUser(setUser({ ...res.data, jwt: user.jwt, onboarding: true }))
 
         if(action === 'delete') {
+          setErrors({})
           if(isDetails) {
             setDetails({ name: '', email: '', phone: ''})
           } else if (isLocation) {
@@ -146,7 +148,7 @@ export default function CheckoutNavigation({
           <Typography variant="h5">{">"}</Typography>
         </Button>
       </Grid>
-      {steps[selectedStep].hasActions ? (
+      {steps[selectedStep].hasActions && user.username !== 'Guest' ? (
         <Grid item classes={{ root: classes.actions }}>
           <Grid container>
             <Grid item>

@@ -61,7 +61,7 @@ export default function Payments({ user, slot, setSlot, checkout, saveCard, setS
     const classes = useStyles({ checkout })
 
 
-    const card = user.paymentMethods[slot]
+    const card =  user.username === 'Guest' ? { last4: '', brand: ''} : user.paymentMethods[slot]
 
  
 

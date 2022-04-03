@@ -106,7 +106,7 @@ export default function Details({
 
 
   useEffect(() => {
-    if(noSlots) return
+    if(noSlots || user.username === 'Guest') return
 
     if(checkout) {
       setValues(user.contactInfo[slot])

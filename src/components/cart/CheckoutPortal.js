@@ -198,6 +198,7 @@ export default function CheckoutPortal({ user }) {
       title: "Confirmation",
       component: (
         <Confirmation
+          user={user}
           detailValues={detailValues}
           billingDetails={billingDetails}
           detailForBilling={detailForBilling}
@@ -206,6 +207,8 @@ export default function CheckoutPortal({ user }) {
           locationForBilling={locationForBilling}
           shippingOptions={shippingOptions}
           selectedShipping={selectedShipping}
+          selectedStep={selectedStep}
+          setSelectedStep={setSelectedStep}
         />
       ),
     },
@@ -237,6 +240,7 @@ export default function CheckoutPortal({ user }) {
         location={locationValues}
         setLocation={setLocationValues}
         locationSlot={locationSlot}
+        setErrors={setErrors}
       />
       <Grid
         item

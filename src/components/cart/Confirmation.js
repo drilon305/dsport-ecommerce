@@ -230,7 +230,8 @@ export default function Confirmation({
       setLoading(false)
 
       dispatchCart(clearCart())
-      console.log(response)
+     
+      setSelectedStep(selectedStep + 1)
     }).catch(error => {
       setLoading(false)
       console.error(error)

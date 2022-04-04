@@ -114,7 +114,8 @@ export default function Confirmation({
   shippingOptions,
   selectedShipping,
   selectedStep,
-  setSelectedStep
+  setSelectedStep,
+  setOrder
 }) {
   const classes = useStyles()
   const [loading, setLoading] = useState(false)
@@ -230,6 +231,8 @@ export default function Confirmation({
       setLoading(false)
 
       dispatchCart(clearCart())
+
+      setOrder(response.data.order)
      
       setSelectedStep(selectedStep + 1)
     }).catch(error => {

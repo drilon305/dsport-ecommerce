@@ -24,11 +24,11 @@ export default function Cart() {
     <Layout>
       <Grid container direction="column" alignItems="center" classes={{root: classes.cartContainer}}>
         <Grid item>
-          <Typography variant="h1">{user.username}'s Cart</Typography>
+          <Typography variant="h1" align='center'>{user.username}'s Cart</Typography>
         </Grid>
         <Grid item container>
             <CartItems />
-            <CheckoutPortal user={user} />
+            {/* <CheckoutPortal user={user} /> */}
         </Grid>
       </Grid>
     </Layout>

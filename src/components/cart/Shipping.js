@@ -14,12 +14,19 @@ const useStyles = makeStyles(theme => ({
         borderRadius: 15,
         width: '10rem',
         height: '10rem',
+        [theme.breakpoints.down('xs')]: {
+          width: '6rem',
+          height: '6rem',
+        },
         '&:hover': {
             backgroundColor: theme.palette.secondary.light,
         },
     },
     label: {
         fontSize: '1.5rem',
+        [theme.breakpoints.down('xs')]: {
+          fontSize: '0.9rem',
+        },
     },
     container: {
         height: '100%',
@@ -30,6 +37,9 @@ const useStyles = makeStyles(theme => ({
     },
     price: {
         color: '#fff',
+        [theme.breakpoints.down('xs')]: {
+          fontSize: '1.25rem',
+        },
     },
     selected: {
         backgroundColor: '#fff',

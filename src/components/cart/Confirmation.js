@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
 import CircularProgress  from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Fields from '../auth/Fields'
@@ -39,6 +40,9 @@ const useStyles = makeStyles(theme => ({
     text: {
         fontSize: '1rem',
         color: '#fff',
+        [theme.breakpoints.down('xs')]: {
+          fontSize: '0.8rem',
+        },
     },
     card: {
         height: 18,
@@ -46,6 +50,9 @@ const useStyles = makeStyles(theme => ({
     },
     priceLabel: {
         fontSize: '1.5rem',
+        [theme.breakpoints.down('xs')]: {
+          fontSize: '0.85rem',
+        },
     },
     darkBackground: {
       backgroundColor: theme.palette.secondary.main,
@@ -68,9 +75,16 @@ const useStyles = makeStyles(theme => ({
     },
     priceValue: {
       marginRight: '1rem',
+       [theme.breakpoints.down('xs')]: {
+          fontSize: '0.85rem',
+          marginRight: '0.5rem',
+        },
     },
     fieldWrapper: {
       marginLeft: '1.2rem',
+      [theme.breakpoints.down('xs')]: {
+        marginLeft: '0.25rem',
+      },
     },
     button: {
       width: '100%',
@@ -89,9 +103,18 @@ const useStyles = makeStyles(theme => ({
     },
     chipRoot: {
       backgroundColor: '#fff',
+      width: '7rem',
     },
     chipLabel: {
       color: theme.palette.secondary.main,
+      fontSize: '1.3rem',
+    },
+    zipIcon: {
+      [theme.breakpoints.down('xs')]: {
+        height: '30px',
+        width: '30px',
+        marginTop: '0.20rem',
+      },
     },
     disabled: {
       backgroundColor: theme.palette.grey[500]
@@ -118,6 +141,7 @@ export default function Confirmation({
   setOrder
 }) {
   const classes = useStyles()
+  const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
   const [loading, setLoading] = useState(false)
   const { cart, dispatchCart } = useContext(CartContext)
   const { dispatchFeedback } = useContext(FeedbackContext)
@@ -165,7 +189,7 @@ export default function Confirmation({
   const secondFields = [
     {
       value: `${locationValues.city}, ${locationValues.state}, ${locationValues.zip}`,
-      adornment: <img src={zipAdornment} alt="city, state, zip code" />,
+      adornment: <img src={zipAdornment} alt="city, state, zip code" className={classes.zipIcon} />,
     },
     {
       value: "**** **** **** 1234",
@@ -204,8 +228,8 @@ export default function Confirmation({
       <Grid item xs={2} classes={{ root: classes.adornmentWrapper }}>
         {adornment}
       </Grid>
-      <Grid item xs={10} classes={{ root: classes.centerText }}>
-        <Typography variant="body1" classes={{ root: classes.text }}>
+      <Grid item xs={10} classes={{ root: classes.centerText }} zeroMinWidth>
+        <Typography noWrap variant="body1" classes={{ root: classes.text }}>
           {value}
         </Typography>
       </Grid>
@@ -306,6 +330,7 @@ export default function Confirmation({
                   errors={promoError}
                   setErrors={setPromoError}
                   isWhite
+                  xs={matchesXS}
                 />
               </span>
             ) : (

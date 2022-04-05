@@ -232,7 +232,7 @@ export default function CheckoutPortal({ user }) {
 
 
   return (
-    <Grid item container alignItems="flex-end" direction="column" xs={6}>
+    <Grid item container alignItems="flex-end" direction="column" lg={6}>
       <CheckoutNavigation
         steps={steps}
         selectedStep={selectedStep}

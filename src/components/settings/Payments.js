@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 import { makeStyles } from '@material-ui/core/styles'
+import {CardElement, useStripe, useElements} from '@stripe/react-stripe-js';
 
 import Slots from './Slots'
 import cardIcon from '../../images/card.svg'
@@ -55,13 +56,39 @@ const useStyles = makeStyles(theme => ({
       color: '#fff',
       fontWeight: 600,
     },
+    form: {
+      width: '75%',
+    },
 }))
 
 export default function Payments({ user, slot, setSlot, checkout, saveCard, setSaveCard  }) {
     const classes = useStyles({ checkout })
+    const stripe =  useStripe() 
+  const elements =  useElements() 
 
 
     const card =  user.username === 'Guest' ? { last4: '', brand: ''} : user.paymentMethods[slot]
+
+    const handleSubmit = async event => {
+
+      event.preventDefault();
+
+      if(!stripe || !elements) return
+    }
+
+    const handleCardChange = async event => {
+      if(event.complete) {
+        console.log('VALID')
+      } else {
+        console.log('INVALID')
+      }
+    }
+
+    const cardWrapper = (
+      <form onSubmit={handleSubmit} className={classes.form}>
+        <CardElement onChange={handleCardChange} />
+      </form>
+    )
 
  
 
@@ -77,12 +104,13 @@ export default function Payments({ user, slot, setSlot, checkout, saveCard, setS
           <img src={cardIcon} alt="payment settings" className={classes.icon} />
         </Grid>
         <Grid item container justifyContent="center">
+          {checkout && !card.last4 ? cardWrapper : null}
           <Grid item>
             <Typography align='center' variant="h3" classes={{ root: classes.number }}>
               {card.last4
                 ? `${card[0].brand.toUpperCase()} **** **** **** ${card[0].last4
                 }`
-                : "Add A New Card During Checkout"}
+                : checkout ? null : "Add A New Card During Checkout"}
             </Typography>
           </Grid>
          {card.last4 && (

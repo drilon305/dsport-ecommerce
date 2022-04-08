@@ -49,7 +49,9 @@ const useStyles = makeStyles(theme => ({
       },
     },
     iconButton: {
-      padding: 6,
+      [theme.breakpoints.down('xs')]: {
+        padding: 6,
+      },
     },
     actions: {
       position: 'absolute',

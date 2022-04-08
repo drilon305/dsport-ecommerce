@@ -215,11 +215,11 @@ const ContactPage = () => {
 
   const info = [
     {
-      label: <span>Mala Recica {matchesXS ? <br /> : null} Example 101</span>,
+      label: <span>Boulevard October 11, {matchesXS ? <br /> : null} 1000 Skopje</span>,
       icon: <img className={classes.contactIcon} src={address} alt="address" />,
     },
     {
-      label: "(389) 070-585-031",
+      label: "(389) 070-111-111",
       icon: (
         <div className={classes.contactIcon}>
           <PhoneAdornment />

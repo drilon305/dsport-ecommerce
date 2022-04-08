@@ -10,7 +10,7 @@ export default function userReducer(state, action) {
             if(user.username === 'Guest') {
                 localStorage.removeItem('user')
             } else {
-                localStorage.setItem('user', JSON.stringify(user))///
+                localStorage.setItem('user', JSON.stringify(user))
             }
             
 

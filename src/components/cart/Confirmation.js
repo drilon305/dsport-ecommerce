@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import axios from 'axios'
 import Grid from '@material-ui/core/Grid'
 import clsx from 'clsx'
@@ -8,6 +8,7 @@ import CircularProgress  from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
+import { v4 as uuidv4 } from 'uuid'
 
 import Fields from '../auth/Fields'
 import { CartContext, FeedbackContext } from '../../contexts'
@@ -138,11 +139,13 @@ export default function Confirmation({
   selectedShipping,
   selectedStep,
   setSelectedStep,
-  setOrder
+  setOrder,
+  order
 }) {
   const classes = useStyles()
   const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
   const [loading, setLoading] = useState(false)
+  const [clientSecret, setClientSecret] = useState(null)
   const { cart, dispatchCart } = useContext(CartContext)
   const { dispatchFeedback } = useContext(FeedbackContext)
 
@@ -263,21 +266,53 @@ export default function Confirmation({
       setLoading(false)
       console.error(error)
 
-      switch (error.response.status) {
-        case 400:
-        dispatchFeedback(setSnackbar({ status: 'error', message: 'Invalid Cart'}))
-        break;
-        case 409:
-          dispatchFeedback(setSnackbar({ status: 'error', message: `The following items are not available at the
-           requested quantity.
-          Please update your cart and try again.\n ` + `${error.response.data.unavailable.map(item => `\nItem: ${item.id}, Available: ${item.qty}`)}`}))
-           break;
-        default:
-        dispatchFeedback(setSnackbar({ status: 'error',
-         message: 'Something went wrong, please refresh the page and try again. You have NOT been charged.'}))
-      }
+     
     })
   }
+
+    useEffect(() => {
+      if(!order && cart.length !== 0) {
+        const storedIntent = localStorage.getItem('intentID')
+        const idempotencyKey = uuidv4()
+
+        setClientSecret(null)
+
+        axios.post(process.env.GATSBY_STRAPI_URL + '/orders/process', {
+          items: cart,
+          total: total.toFixed(2),
+          shippingOption: shipping,
+          idempotencyKey,
+          storedIntent,
+          email: detailValues.email
+        }, 
+        {
+          headers: user.jwt ? { Authorization: `Bearer ${user.jwt}`} : undefined,
+        }).then(response => {
+          setClientSecret(response.data.client_secret)
+          localStorage.setItem('intentID', response.data.intentID)
+        }).catch(error => {
+          console.error(error)
+
+          switch (error.response.status) {
+            case 400:
+            dispatchFeedback(setSnackbar({ status: 'error', message: 'Invalid Cart'}))
+            break;
+            case 409:
+              dispatchFeedback(setSnackbar({ status: 'error', message: `The following items are not available at the
+               requested quantity.
+              Please update your cart and try again.\n ` + `${error.response.data.unavailable.map(item => `\nItem: ${item.id}, Available: ${item.qty}`)}`}))
+               break;
+            default:
+            dispatchFeedback(setSnackbar({ status: 'error',
+             message: 'Something went wrong, please refresh the page and try again. You have NOT been charged.'}))
+          }
+        })
+      }
+
+    }, [cart])
+
+    console.log('CLIENT SECRET', clientSecret)
+
 
   return (
     <Grid
@@ -359,7 +394,7 @@ export default function Confirmation({
         <Button
           classes={{ root: classes.button, disabled: classes.disabled }}
           onClick={handleOrder}
-          disabled={cart.length === 0 || loading}
+          disabled={cart.length === 0 || loading || !clientSecret}
         >
           <Grid container justifyContent="space-around" alignItems="center">
             <Grid item>

@@ -225,6 +225,7 @@ export default function CheckoutPortal({ user }) {
         <Confirmation
           user={user}
           order={order}
+          saveCard={saveCard}
           setOrder={setOrder}
           detailValues={detailValues}
           billingDetails={billingDetails}

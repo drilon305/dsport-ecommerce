@@ -30,6 +30,7 @@ const useStyles = makeStyles(theme => ({
     },
     container: {
         height: '100%',
+        display: ({ selectedStep, stepNumber }) =>  selectedStep !== stepNumber ? 'none' : 'flex'
     },
     icon: {
         marginTop: '-2rem',
@@ -52,54 +53,71 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-export default function Shipping({ shippingOptions, selectedShipping, setSelectedShipping }) {
-    const classes = useStyles()
+export default function Shipping({
+  shippingOptions,
+  selectedShipping,
+  setSelectedShipping,
+  selectedStep,
+  stepNumber,
+}) {
+  const classes = useStyles({ selectedStep, stepNumber })
 
-    return (
-      <Grid
-        item
-        container
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        classes={{ root: classes.container }}
-      >
-        <Grid item>
-          <img src={shippingIcon} alt="shipping" className={classes.icon} />
-        </Grid>
-        <Grid item container justifyContent="space-around">
-          {shippingOptions.map(option => (
-            <Grid item key={option.label}>
-              <Button
-              disableRipple
-                classes={{ root: clsx(classes.button, {
-                    [classes.selected]: selectedShipping === option.label
-                }) }}
-                onClick={() => setSelectedShipping(option.label)}
-              >
-                <Grid container direction="column">
-                  <Grid item>
-                    <Typography variant="h5" classes={{ root: clsx(classes.label, {
-                        [classes.selectedText]: selectedShipping === option.label
-                    }) }}>
-                      {option.label}
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography
-                      variant="body1"
-                      classes={{ root: clsx(classes.price, {
-                        [classes.selectedText]: selectedShipping === option.label
-                      }) }}
-                    >
-                      {`$${option.price.toFixed(2)}`}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Button>
-            </Grid>
-          ))}
-        </Grid>
+  return (
+    <Grid
+      item
+      container
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      classes={{ root: classes.container }}
+    >
+      <Grid item>
+        <img src={shippingIcon} alt="shipping" className={classes.icon} />
       </Grid>
-    )
+      <Grid item container justifyContent="space-around">
+        {shippingOptions.map(option => (
+          <Grid item key={option.label}>
+            <Button
+              disableRipple
+              classes={{
+                root: clsx(classes.button, {
+                  [classes.selected]: selectedShipping === option.label,
+                }),
+              }}
+              onClick={() => setSelectedShipping(option.label)}
+            >
+              <Grid container direction="column">
+                <Grid item>
+                  <Typography
+                    variant="h5"
+                    classes={{
+                      root: clsx(classes.label, {
+                        [classes.selectedText]:
+                          selectedShipping === option.label,
+                      }),
+                    }}
+                  >
+                    {option.label}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography
+                    variant="body1"
+                    classes={{
+                      root: clsx(classes.price, {
+                        [classes.selectedText]:
+                          selectedShipping === option.label,
+                      }),
+                    }}
+                  >
+                    {`$${option.price.toFixed(2)}`}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Button>
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
+  )
 }

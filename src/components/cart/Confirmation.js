@@ -8,6 +8,7 @@ import CircularProgress  from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { v4 as uuidv4 } from 'uuid'
 
 import Fields from '../auth/Fields'
@@ -101,6 +102,7 @@ const useStyles = makeStyles(theme => ({
     },
     mainContainer: {
       height: '100%',
+      display: ({ selectedStep, stepNumber }) => selectedStep !== stepNumber ? 'none' : 'flex',
     },
     chipRoot: {
       backgroundColor: '#fff',
@@ -140,10 +142,15 @@ export default function Confirmation({
   selectedStep,
   setSelectedStep,
   setOrder,
-  order
+  order,
+  stepNumber
 }) {
-  const classes = useStyles()
+  const classes = useStyles({ selectedStep, stepNumber })
+  const stripe = useStripe()
+  const elements = useElements()
+
   const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
+
   const [loading, setLoading] = useState(false)
   const [clientSecret, setClientSecret] = useState(null)
   const { cart, dispatchCart } = useContext(CartContext)
@@ -239,35 +246,61 @@ export default function Confirmation({
     </>
   )
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     setLoading(true)
 
-    axios.post(process.env.GATSBY_STRAPI_URL + '/orders/place', {
-      shippingAddress: locationValues,
-      billingAddress: billingLocation,
-      shippingInfo: detailValues,
-      billingInfo: billingDetails,
-      shippingOption: shipping,
-      subtotal: subtotal.toFixed(2),
-      tax: tax.toFixed(2),
-      total: total.toFixed(2),
-      items: cart,
-    }, {
-      headers: user.username === 'Guest' ? undefined : { Authorization: `Bearer ${user.jwt}`}
-    }).then(response => {
+    const idempotencyKey = uuidv4()
+    
+    const cardElement = elements.getElement(CardElement)
+
+    const result = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+           address: billingLocation.city,
+           state: billingLocation.state,
+           line1: billingLocation.street
+          },
+          email: billingDetails.email,
+          name: billingDetails.name,
+          phone: billingDetails.phone
+        }
+    }, { idempotencyKey })
+
+    if(result.error) {
+      console.error(result.error.message)
+      dispatchFeedback(setSnackbar({ status: 'error', message: result.error.message}))
       setLoading(false)
+    } else if(result.paymentIntent.status === 'succeeded') {
+      console.log('PAYMENT SUCCESSFULLY')
+    }
 
-      dispatchCart(clearCart())
 
-      setOrder(response.data.order)
+
+    // axios.post(process.env.GATSBY_STRAPI_URL + '/orders/finalize', {
+    //   shippingAddress: locationValues,
+    //   billingAddress: billingLocation,
+    //   shippingInfo: detailValues,
+    //   billingInfo: billingDetails,
+    //   shippingOption: shipping,
+    //   subtotal: subtotal.toFixed(2),
+    //   tax: tax.toFixed(2),
+    //   total: total.toFixed(2),
+    //   items: cart,
+    // }, {
+    //   headers: user.username === 'Guest' ? undefined : { Authorization: `Bearer ${user.jwt}`}
+    // }).then(response => {
+    //   setLoading(false)
+
+    //   dispatchCart(clearCart())
+
+    //   setOrder(response.data.order)
      
-      setSelectedStep(selectedStep + 1)
-    }).catch(error => {
-      setLoading(false)
-      console.error(error)
-
-     
-    })
+    //   setSelectedStep(selectedStep + 1)
+    // }).catch(error => {
+    //   setLoading(false)
+    //   console.error(error)
+    // })
   }
 
     useEffect(() => {

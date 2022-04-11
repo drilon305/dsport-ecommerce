@@ -223,7 +223,7 @@ export default function Confirmation({
     },
     {
       label: "SHIPPING",
-      value: shipping.price.toFixed(2),
+      value: shipping?.price.toFixed(2),
     },
     {
       label: "TAX",
@@ -257,14 +257,16 @@ export default function Confirmation({
         payment_method: {
           card: cardElement,
           billing_details: {
-           address: billingLocation.city,
-           state: billingLocation.state,
-           line1: billingLocation.street
+           address: {
+             city:  billingLocation.city,
+             state: billingLocation.state,
+             line1: billingLocation.street
           },
           email: billingDetails.email,
           name: billingDetails.name,
           phone: billingDetails.phone
         }
+      }
     }, { idempotencyKey })
 
     if(result.error) {
@@ -272,39 +274,45 @@ export default function Confirmation({
       dispatchFeedback(setSnackbar({ status: 'error', message: result.error.message}))
       setLoading(false)
     } else if(result.paymentIntent.status === 'succeeded') {
-      console.log('PAYMENT SUCCESSFULLY')
+      axios.post(process.env.GATSBY_STRAPI_URL + '/orders/finalize', {
+        shippingAddress: locationValues,
+        billingAddress: billingLocation,
+        shippingInfo: detailValues,
+        billingInfo: billingDetails,
+        shippingOption: shipping,
+        subtotal: subtotal.toFixed(2),
+        tax: tax.toFixed(2),
+        total: total.toFixed(2),
+        items: cart,
+        transaction: result.paymentIntent.id
+      }, {
+        headers: user.username === 'Guest' ? undefined : { Authorization: `Bearer ${user.jwt}`}
+      }).then(response => {
+        setLoading(false)
+        dispatchCart(clearCart())
+
+        localStorage.removeItem('intentID')
+        setClientSecret(null)
+  
+        setOrder(response.data.order)
+        setSelectedStep(selectedStep + 1)
+      }).catch(error => {
+        setLoading(false)
+        console.error(error)
+  
+
+        localStorage.removeItem('intentID')
+        setClientSecret(null)
+
+        dispatchFeedback(setSnackbar({ status: 'error', message: 'There was a problem saving your order. Please keep this screen open and contact support.'}))
+      })
     }
 
 
-
-    // axios.post(process.env.GATSBY_STRAPI_URL + '/orders/finalize', {
-    //   shippingAddress: locationValues,
-    //   billingAddress: billingLocation,
-    //   shippingInfo: detailValues,
-    //   billingInfo: billingDetails,
-    //   shippingOption: shipping,
-    //   subtotal: subtotal.toFixed(2),
-    //   tax: tax.toFixed(2),
-    //   total: total.toFixed(2),
-    //   items: cart,
-    // }, {
-    //   headers: user.username === 'Guest' ? undefined : { Authorization: `Bearer ${user.jwt}`}
-    // }).then(response => {
-    //   setLoading(false)
-
-    //   dispatchCart(clearCart())
-
-    //   setOrder(response.data.order)
-     
-    //   setSelectedStep(selectedStep + 1)
-    // }).catch(error => {
-    //   setLoading(false)
-    //   console.error(error)
-    // })
   }
 
     useEffect(() => {
-      if(!order && cart.length !== 0) {
+      if(!order && cart.length !== 0 && selectedStep === stepNumber) {
         const storedIntent = localStorage.getItem('intentID')
         const idempotencyKey = uuidv4()
 
@@ -342,7 +350,7 @@ export default function Confirmation({
         })
       }
 
-    }, [cart])
+    }, [cart, selectedStep, stepNumber])
 
     console.log('CLIENT SECRET', clientSecret)
 

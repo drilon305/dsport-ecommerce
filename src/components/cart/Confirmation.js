@@ -12,8 +12,8 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { v4 as uuidv4 } from 'uuid'
 
 import Fields from '../auth/Fields'
-import { CartContext, FeedbackContext } from '../../contexts'
-import { setSnackbar, clearCart } from '../../contexts/actions'
+import { CartContext, FeedbackContext, UserContext } from '../../contexts'
+import { setSnackbar, clearCart, setUser } from '../../contexts/actions'
 
 import confirmationIcon from '../../images/tag.svg'
 import NameAdornment from '../../images/NameAdornment'
@@ -158,6 +158,7 @@ export default function Confirmation({
   const [clientSecret, setClientSecret] = useState(null)
   const { cart, dispatchCart } = useContext(CartContext)
   const { dispatchFeedback } = useContext(FeedbackContext)
+  const { dispatchuser } = useContext(UserContext)
 
   const [promo, setPromo] = useState({ promo: "" })
   const [promoError, setPromoError] = useState({})
@@ -296,12 +297,18 @@ export default function Confirmation({
       }, {
         headers: user.username === 'Guest' ? undefined : { Authorization: `Bearer ${user.jwt}`}
       }).then(response => {
+        if(saveCard) {
+          let newUser = { ...user }
+          newUser.paymentMethods[cardSlot] = card
+          dispatchUser(setUser(newUser))
+        }
+
         setLoading(false)
         dispatchCart(clearCart())
 
         localStorage.removeItem('intentID')
         setClientSecret(null)
-  
+
         setOrder(response.data.order)
         setSelectedStep(selectedStep + 1)
       }).catch(error => {
@@ -359,8 +366,6 @@ export default function Confirmation({
       }
 
     }, [cart, selectedStep, stepNumber])
-
-    console.log('CLIENT SECRET', clientSecret)
 
 
   return (

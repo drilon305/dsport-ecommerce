@@ -143,6 +143,9 @@ export default function Confirmation({
   setSelectedStep,
   setOrder,
   order,
+  saveCard,
+  card,
+  cardSlot,
   stepNumber
 }) {
   const classes = useStyles({ selectedStep, stepNumber })
@@ -202,7 +205,7 @@ export default function Confirmation({
       adornment: <img src={zipAdornment} alt="city, state, zip code" className={classes.zipIcon} />,
     },
     {
-      value: "**** **** **** 1234",
+      value: `${card.brand.toUpperCase()} ${card.last4}`,
       adornment: (
         <img src={cardAdornment} alt="credit card" className={classes.card} />
       ),
@@ -265,8 +268,10 @@ export default function Confirmation({
           email: billingDetails.email,
           name: billingDetails.name,
           phone: billingDetails.phone
-        }
-      }
+        },
+      },
+
+      setup_future_usage: saveCard ? 'off_session' : undefined,
     }, { idempotencyKey })
 
     if(result.error) {
@@ -284,7 +289,10 @@ export default function Confirmation({
         tax: tax.toFixed(2),
         total: total.toFixed(2),
         items: cart,
-        transaction: result.paymentIntent.id
+        transaction: result.paymentIntent.id,
+        paymentMethod: card,
+        saveCard,
+        cardSlot
       }, {
         headers: user.username === 'Guest' ? undefined : { Authorization: `Bearer ${user.jwt}`}
       }).then(response => {

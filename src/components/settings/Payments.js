@@ -174,7 +174,7 @@ export default function Payments({
         classes={{ root: classes.slotContainer }}
       >
         <Slots slot={slot} setSlot={setSlot} noLabel />
-        {checkout && (
+        {checkout && user.username !== 'Guest' (
           <Grid item>
             <FormControlLabel
               classes={{

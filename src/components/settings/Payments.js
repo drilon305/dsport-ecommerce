@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect  } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
@@ -125,6 +125,21 @@ export default function Payments({
     </form>
   )
 
+  useEffect(() => {
+    if(!checkout || !user.jwt) return
+
+    if(user.paymentMethods[slot].last4 !== '') {
+      setCard(user.paymentMethods[slot])
+      setCardError(false)
+    } else {
+      setCard({brand: '', last4: ''})
+      setCardError(true)
+    }
+
+  }, [slot])
+
+
+
   return (
     <Grid
       item
@@ -174,7 +189,7 @@ export default function Payments({
         classes={{ root: classes.slotContainer }}
       >
         <Slots slot={slot} setSlot={setSlot} noLabel />
-        {checkout && user.username !== 'Guest' (
+        {checkout && user.username !== 'Guest' && (
           <Grid item>
             <FormControlLabel
               classes={{

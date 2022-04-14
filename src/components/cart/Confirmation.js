@@ -158,7 +158,7 @@ export default function Confirmation({
   const [clientSecret, setClientSecret] = useState(null)
   const { cart, dispatchCart } = useContext(CartContext)
   const { dispatchFeedback } = useContext(FeedbackContext)
-  const { dispatchuser } = useContext(UserContext)
+  const { dispatchUser } = useContext(UserContext)
 
   const [promo, setPromo] = useState({ promo: "" })
   const [promoError, setPromoError] = useState({})
@@ -253,12 +253,14 @@ export default function Confirmation({
   const handleOrder = async () => {
     setLoading(true)
 
+    const savedCard = user.jwt && user.paymentMethods[cardSlot].last4 !== ''
+
     const idempotencyKey = uuidv4()
     
     const cardElement = elements.getElement(CardElement)
 
     const result = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
+        payment_method: savedCard ? undefined : {
           card: cardElement,
           billing_details: {
            address: {
@@ -339,7 +341,8 @@ export default function Confirmation({
           shippingOption: shipping,
           idempotencyKey,
           storedIntent,
-          email: detailValues.email
+          email: detailValues.email,
+          savedCard: user.jwt && user.paymentMethods[cardSlot].last4 !== '' ? card.last4 : undefined
         }, 
         {
           headers: user.jwt ? { Authorization: `Bearer ${user.jwt}`} : undefined,

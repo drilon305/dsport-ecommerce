@@ -2,9 +2,10 @@ import React, { useContext, useState, useEffect } from 'react'
 import clsx from 'clsx'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
+import { makeStyles } from '@material-ui/core/styles'
+
 
 import Details from './Details'
 import Payments from './Payments'
@@ -22,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const stripePromise = loadStripe(process.env.GATSBY_STRAPI_PK)
+const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PK)
 
 export default function Settings({ setSelectedSetting}) {
     const classes = useStyles()

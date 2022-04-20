@@ -226,8 +226,8 @@ export default function CheckoutPortal({ user }) {
       component: (
         <Confirmation
           user={user}
-          card={card}
           order={order}
+          card={card}
           cardSlot={cardSlot}
           saveCard={saveCard}
           setOrder={setOrder}

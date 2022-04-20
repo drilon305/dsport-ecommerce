@@ -316,12 +316,13 @@ export default function Confirmation({
       }).catch(error => {
         setLoading(false)
         console.error(error)
-  
+    
 
         localStorage.removeItem('intentID')
         setClientSecret(null)
 
-        dispatchFeedback(setSnackbar({ status: 'error', message: 'There was a problem saving your order. Please keep this screen open and contact support.'}))
+        dispatchFeedback(setSnackbar({ status: 'error',
+       message: 'There was a problem saving your order. Please keep this screen open and contact support.'}))
       })
     }
 

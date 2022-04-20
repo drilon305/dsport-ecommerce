@@ -80,7 +80,8 @@ setDetailErrors({})
            user={user}
             edit={edit}
              slot={billingSlot} 
-            setSlot={setBillingSlot} />
+            setSlot={setBillingSlot} 
+            />
             </Elements>
         </Grid>
         <Grid

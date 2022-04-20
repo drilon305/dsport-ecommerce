@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: '5rem',
         [theme.breakpoints.down('xs')]: {
           marginBottom: ({ checkout }) => checkout ? '1rem' : undefined,
-          fontSize: ({ checkout }) checkout ? '1.5rem' : undefined
+          fontSize: ({ checkout }) => checkout ? '1.5rem' : undefined
       },
     },
     removeCard: {
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
             backgroundColor: '#fff',
           },
           [theme.breakpoints.down('xs')]: {
-            marginLeft: ({ checkout }) checkout ? 0 : undefined
+            marginLeft: ({ checkout }) => checkout ? 0 : undefined
           },
     },
     removeCardText: {

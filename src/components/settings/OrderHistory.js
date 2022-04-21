@@ -25,23 +25,41 @@ const useStyles = makeStyles(theme => ({
         ".MuiDataGrid-root .MuiDataGrid-columnHeader--moving": {
             "background-color": 'transparent'
         },
+        ".MuiDataGrid-root .MuiDataGrid-cell": {
+            'white-space': 'pre-wrap',
+            'max-height': '100% !important',
+            'line-height': 'initial !important',
+            padding: '1rem',
+        },
+        ".MuiDataGrid-root .MuiDataGrid-row": {
+            'max-height': '100% !important',
+        },
     },
 }))
 
 export default function OrderHistory() {
     const classes = useStyles()
-    const [order, setOrder] = useState([])
+    const [orders, setOrders] = useState([])
     const { user } = useContext(UserContext)
 
     useEffect(() => {
         axios.get(process.env.GATSBY_STRAPI_URL + '/orders/history', {
             headers: { Authorization: `Bearer ${user.jwt}`}
         }).then(response => {
-            console.log(response)
+            setOrders(response.data.orders)
         }).catch(error => {
             console.error(error)
         })
     }, [])
+
+    const createData = data => data.map(item => ({
+        shipping: `${item.shippingInfo.name}\n${item.shippingAddress.street}\n${item.shippingAddress.city}, ${item.shippingAddress.state} ${item.shippingAddress.zip}`,
+        order: `#${item.id.slice(item.id.length - 10, item.id.length)}`,
+        status: item.status,
+        date: `${item.createdAt.split('-')[1]}/${item.createdAt.split('-')[2].split('T')[0]}/${item.createdAt.split('-')[0]}`,
+        total: item.total,
+        id: item.id
+    }))
 
     const columns = [
       { field: "shipping", headerName: 'Shipping', flex: 1, sortable: false },
@@ -52,7 +70,7 @@ export default function OrderHistory() {
       { field: '', flex: 1.5, sortable: false},
     ]
 
-    const rows = []
+    const rows = createData(orders)
 
     return (
         <Grid item classes={{root: classes.item}}>

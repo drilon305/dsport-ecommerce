@@ -155,7 +155,7 @@ export default function OrderHistory({ setSelectedSetting }) {
         </IconButton>
       </Grid>
       <DataGrid hideFooterSelectedRowCount onRowClick={event => setOpen(event.row.id)} rows={rows} columns={columns} pageSize={5} />
-      <OrderDetails open={open} setOpen={setOpen} />
+      <OrderDetails open={open} setOpen={setOpen} orders={orders} />
     </Grid>
   )
 }

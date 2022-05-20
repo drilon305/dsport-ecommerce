@@ -37,7 +37,10 @@ const useStyles = makeStyles(theme => ({
     },
     chipRoot: {
       backgroundColor: theme.palette.primary.main
-    }
+    },
+    prices: {
+      padding: '0.5rem 1rem'
+    },
 }))
 
 export default function OrderDetails({ orders, open, setOpen }) {
@@ -48,6 +51,15 @@ export default function OrderDetails({ orders, open, setOpen }) {
     /iPad|iPhone|iPod/.test(navigator.userAgent)
 
   const order = orders.find(order => order.id === open)
+
+  const prices = [
+    { label: 'Subtotal', value: order?.subtotal },
+    {label: 'Shipping', value: order?.shippingOption.price},
+    {label: 'Tax', value: order?.tax},
+    {label: 'Total', value: order?.total},
+    {label: 'Payment', string: `${order?.paymentMethod.brand.toUpperCase()} ${order?.paymentMethod.last4}`},
+    {label: 'Transaction', string: order?.transaction}
+  ]
 
   return (
     <SwipeableDrawer
@@ -60,20 +72,20 @@ export default function OrderDetails({ orders, open, setOpen }) {
       disableDiscovery={iOS}
     >
       <Grid item container direction="column">
-        <Grid item classes={{root: classes.dark}}>
-          <Typography
-            variant="h2"
-            classes={{ root: classes.id }}
-          >
+        <Grid item classes={{ root: classes.dark }}>
+          <Typography variant="h2" classes={{ root: classes.id }}>
             Order #
             {order?.id
               .slice(order.id.length - 10, order.id.length)
               .toUpperCase()}
           </Typography>
         </Grid>
-        <Grid item container classes={{root: classes.dark}}>
-          <Grid item classes={{root: classes.status}}>
-            <Chip label={order?.status} classes={{ label: classes.bold, root: classes.chipRoot }} />
+        <Grid item container classes={{ root: classes.dark }}>
+          <Grid item classes={{ root: classes.status }}>
+            <Chip
+              label={order?.status}
+              classes={{ label: classes.bold, root: classes.chipRoot }}
+            />
           </Grid>
           <Grid item>
             <Typography variant="body2" classes={{ root: classes.date }}>
@@ -83,40 +95,69 @@ export default function OrderDetails({ orders, open, setOpen }) {
             </Typography>
           </Grid>
         </Grid>
-              <Grid item classes={{root: classes.padding}}>
-                <Typography variant='body2' classes={{ root:  classes.bold}}>
-                  Billing
-                </Typography>
+        <Grid item classes={{ root: classes.padding }}>
+          <Typography variant="body2" classes={{ root: classes.bold }}>
+            Billing
+          </Typography>
+          <Typography variant="body2">
+            {order?.billingInfo.name}
+            <br />
+            {order?.billingInfo.email}
+            <br />
+            {order?.billingInfo.phone}
+            <br />
+            <br />
+            {order?.billingAddress.street}
+            <br />
+            {order?.billingAddress.city}, {order?.billingAddress.state}{" "}
+            {order?.billingAddress.zip}
+          </Typography>
+        </Grid>
+        <Grid item classes={{ root: clsx(classes.dark, classes.padding) }}>
+          <Typography variant="body2" classes={{ root: classes.bold }}>
+            Shipping
+          </Typography>
+          <Typography variant="body2">
+            {order?.shippingInfo.name}
+            <br />
+            {order?.shippingInfo.email}
+            <br />
+            {order?.shippingInfo.phone}
+            <br />
+            <br />
+            {order?.shippingAddress.street}
+            <br />
+            {order?.shippingAddress.city}, {order?.shippingAddress.state}{" "}
+            {order?.shippingAddress.zip}
+          </Typography>
+        </Grid>
+        {prices.map(price => (
+          <Grid
+            item
+            key={price.label}
+            container
+            justifyContent="space-between"
+            classes={{ root: classes.prices }}
+          >
+            <Grid item>
+              <Typography variant="body2" classes={{ root: classes.bold }}>
+                {price.label}
+              </Typography>
+            </Grid>
+            <Grid item>
+              {price.string ? (
                 <Typography variant='body2'>
-                  {order?.billingInfo.name}
-                  <br />
-                  {order?.billingInfo.email}
-                  <br />
-                  {order?.billingInfo.phone}
-                  <br />
-                  <br />
-                  {order?.billingAddress.street}
-                  <br />
-                  {order?.billingAddress.city}, {order?.billingAddress.state} {order?.billingAddress.zip}
+                  {price.string}
                 </Typography>
-              </Grid>
-              <Grid item classes={{root: clsx(classes.dark, classes.padding)}}>
-                <Typography variant='body2' classes={{ root:  classes.bold}}>
-                  Shipping
-                </Typography>
-                <Typography variant='body2'>
-                  {order?.shippingInfo.name}
-                  <br />
-                  {order?.shippingInfo.email}
-                  <br />
-                  {order?.shippingInfo.phone}
-                  <br />
-                  <br />
-                  {order?.shippingAddress.street}
-                  <br />
-                  {order?.shippingAddress.city}, {order?.shippingAddress.state} {order?.shippingAddress.zip}
-                </Typography>
-              </Grid>
+              ) : (
+                <Chip
+                label={`$${price.value}`}
+                classes={{ label: classes.bold }}
+              />
+              )}
+            </Grid>
+          </Grid>
+        ))}
       </Grid>
     </SwipeableDrawer>
   )

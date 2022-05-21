@@ -6,6 +6,8 @@ import Chip from '@material-ui/core/Chip'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 
+import OrderDetailItem from './OrderDetailItem'
+
 const useStyles = makeStyles(theme => ({
     drawer: {
         height: '100%',
@@ -20,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     },
     bold: {
       fontWeight: 600,
+      fontSize: '1rem'
     },
     date: {
       fontWeight: 600,
@@ -151,13 +154,19 @@ export default function OrderDetails({ orders, open, setOpen }) {
                 </Typography>
               ) : (
                 <Chip
-                label={`$${price.value}`}
+                label={`$${price.value?.toFixed(2)}`}
                 classes={{ label: classes.bold }}
               />
               )}
             </Grid>
           </Grid>
         ))}
+        <Grid item classes={{root: clsx(classes.dark, classes.padding)}}>
+          <Typography variant='body2' gutterBottom classes={{root: classes.bold}}>
+            Items
+          </Typography>
+          {order?.items.map(item => <OrderDetailItem item={item} key={item.variant.id} />)}
+        </Grid>
       </Grid>
     </SwipeableDrawer>
   )

@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import Chip from '@material-ui/core/Chip'
 import Typography from '@material-ui/core/Typography'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
 import OrderDetailItem from './OrderDetailItem'
@@ -12,7 +13,10 @@ const useStyles = makeStyles(theme => ({
     drawer: {
         height: '100%',
         width: '30rem',
-        backgroundColor: theme.palette.primary.main
+        backgroundColor: theme.palette.primary.main,
+        [theme.breakpoints.down('xs')]: {
+          width: '100%',
+        },
     },
     id: {
       fontSize: '2.5rem',
@@ -44,10 +48,16 @@ const useStyles = makeStyles(theme => ({
     prices: {
       padding: '0.5rem 1rem'
     },
+    text: {
+      [theme.breakpoints.down('xs')]: {
+        fontSize: '1.25rem',
+      },
+    },
 }))
 
 export default function OrderDetails({ orders, open, setOpen }) {
   const classes = useStyles()
+  const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
 
   const iOS =
     typeof navigator !== "undefined" &&
@@ -68,7 +78,7 @@ export default function OrderDetails({ orders, open, setOpen }) {
     <SwipeableDrawer
       open={!!open}
       onOpen={() => null}
-      anchor="right"
+      anchor={matchesXS ? "bottom" : "right"}
       onClose={() => setOpen(null)}
       classes={{ paper: classes.drawer }}
       disableBackdropTransition={!iOS}
@@ -102,7 +112,7 @@ export default function OrderDetails({ orders, open, setOpen }) {
           <Typography variant="body2" classes={{ root: classes.bold }}>
             Billing
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" classes={{root: classes.text}}>
             {order?.billingInfo.name}
             <br />
             {order?.billingInfo.email}
@@ -120,7 +130,7 @@ export default function OrderDetails({ orders, open, setOpen }) {
           <Typography variant="body2" classes={{ root: classes.bold }}>
             Shipping
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" classes={{root: classes.text}}>
             {order?.shippingInfo.name}
             <br />
             {order?.shippingInfo.email}
@@ -149,7 +159,7 @@ export default function OrderDetails({ orders, open, setOpen }) {
             </Grid>
             <Grid item>
               {price.string ? (
-                <Typography variant='body2'>
+                <Typography variant='body2' classes={{root: classes.text}}>
                   {price.string}
                 </Typography>
               ) : (

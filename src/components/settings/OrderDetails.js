@@ -4,6 +4,8 @@ import Grid from '@material-ui/core/Grid'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import Chip from '@material-ui/core/Chip'
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
 import OrderDetailItem from './OrderDetailItem'
@@ -12,7 +14,10 @@ const useStyles = makeStyles(theme => ({
     drawer: {
         height: '100%',
         width: '30rem',
-        backgroundColor: theme.palette.primary.main
+        backgroundColor: 'transparent',
+        [theme.breakpoints.down('xs')]: {
+          width: '100%',
+        },
     },
     id: {
       fontSize: '2.5rem',
@@ -38,16 +43,25 @@ const useStyles = makeStyles(theme => ({
     dark: {
       backgroundColor: theme.palette.secondary.main
     },
-    chipRoot: {
+    light: {
       backgroundColor: theme.palette.primary.main
     },
     prices: {
       padding: '0.5rem 1rem'
     },
+    text: {
+      [theme.breakpoints.down('xs')]: {
+        fontSize: '1.25rem',
+      },
+    },
+    spacer: {
+      minHeight: '10rem'
+    },
 }))
 
 export default function OrderDetails({ orders, open, setOpen }) {
   const classes = useStyles()
+  const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
 
   const iOS =
     typeof navigator !== "undefined" &&
@@ -68,13 +82,20 @@ export default function OrderDetails({ orders, open, setOpen }) {
     <SwipeableDrawer
       open={!!open}
       onOpen={() => null}
-      anchor="right"
+      anchor={matchesXS ? "bottom" : "right"}
       onClose={() => setOpen(null)}
       classes={{ paper: classes.drawer }}
       disableBackdropTransition={!iOS}
       disableDiscovery={iOS}
     >
-      <Grid item container direction="column">
+      <Grid
+        item
+        classes={{ root: classes.spacer }}
+        component={Button}
+        disableRipple
+        onClick={() => setOpen(null)}
+      />
+      <Grid item container direction="column" classes={{ root: classes.light }}>
         <Grid item classes={{ root: classes.dark }}>
           <Typography variant="h2" classes={{ root: classes.id }}>
             Order #
@@ -87,7 +108,7 @@ export default function OrderDetails({ orders, open, setOpen }) {
           <Grid item classes={{ root: classes.status }}>
             <Chip
               label={order?.status}
-              classes={{ label: classes.bold, root: classes.chipRoot }}
+              classes={{ label: classes.bold, root: classes.light }}
             />
           </Grid>
           <Grid item>
@@ -102,7 +123,7 @@ export default function OrderDetails({ orders, open, setOpen }) {
           <Typography variant="body2" classes={{ root: classes.bold }}>
             Billing
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" classes={{ root: classes.text }}>
             {order?.billingInfo.name}
             <br />
             {order?.billingInfo.email}
@@ -120,7 +141,7 @@ export default function OrderDetails({ orders, open, setOpen }) {
           <Typography variant="body2" classes={{ root: classes.bold }}>
             Shipping
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" classes={{ root: classes.text }}>
             {order?.shippingInfo.name}
             <br />
             {order?.shippingInfo.email}
@@ -149,23 +170,29 @@ export default function OrderDetails({ orders, open, setOpen }) {
             </Grid>
             <Grid item>
               {price.string ? (
-                <Typography variant='body2'>
+                <Typography variant="body2" classes={{ root: classes.text }}>
                   {price.string}
                 </Typography>
               ) : (
                 <Chip
-                label={`$${price.value?.toFixed(2)}`}
-                classes={{ label: classes.bold }}
-              />
+                  label={`$${price.value?.toFixed(2)}`}
+                  classes={{ label: classes.bold }}
+                />
               )}
             </Grid>
           </Grid>
         ))}
-        <Grid item classes={{root: clsx(classes.dark, classes.padding)}}>
-          <Typography variant='body2' gutterBottom classes={{root: classes.bold}}>
+        <Grid item classes={{ root: clsx(classes.dark, classes.padding) }}>
+          <Typography
+            variant="body2"
+            gutterBottom
+            classes={{ root: classes.bold }}
+          >
             Items
           </Typography>
-          {order?.items.map(item => <OrderDetailItem item={item} key={item.variant.id} />)}
+          {order?.items.map(item => (
+            <OrderDetailItem item={item} key={item.variant.id} />
+          ))}
         </Grid>
       </Grid>
     </SwipeableDrawer>

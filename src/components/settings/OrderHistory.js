@@ -80,6 +80,12 @@ const useStyles = makeStyles(theme => ({
         ".MuiDataGrid-root": {
             border: 'none'
         },
+        ".MuiDataGrid-root .MuiDataGrid-window": {
+          bottom: '8rem'
+        },
+        ".MuiDataGrid-root .MuiDataGrid-overlay": {
+          bottom: '8rem'
+        },
     },
 }))
 
@@ -117,26 +123,26 @@ export default function OrderHistory({ setSelectedSetting }) {
     }))
 
   const columns = [
-    { field: "shipping", headerName: "Shipping", flex: 1, sortable: false },
-    { field: "order", headerName: "Order", flex: 1 },
+    { field: "shipping", headerName: "Shipping", width: 350, sortable: false },
+    { field: "order", headerName: "Order", width: 250 },
     {
       field: "status",
       headerName: "Status",
-      flex: 1,
+      width: 250,
       renderCell: ({ value }) => (
         <Chip label={value} classes={{ label: classes.chipLabel }} />
       ),
     },
-    { field: "date", headerName: "Date", flex: 1, type: "date" },
+    { field: "date", headerName: "Date",  width: 250, type: "date" },
     {
       field: "total",
       headerName: "Total",
-      flex: 1,
+      width: 250,
       renderCell: ({ value }) => (
         <Chip label={`$${value}`} classes={{ label: classes.chipLabel }} />
       ),
     },
-    { field: "", flex: 1.5, sortable: false, renderCell: () => (
+    { field: "",  width: 350, sortable: false, renderCell: () => (
       <IconButton>
         <img src={detailsIcon} alt='order details' />
       </IconButton>

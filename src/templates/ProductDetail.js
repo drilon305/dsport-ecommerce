@@ -7,6 +7,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 import ProductImages from '../components/product-detail/ProductImages'
 import ProductInfo from '../components/product-detail/ProductInfo'
+import ProductReviews from '../components/product-detail/ProductReviews'
 
 import { GET_DETAILS } from '../apollo/queries'
 
@@ -73,6 +74,7 @@ export default function ProductDetail({
             stock={stock}
           />
         </Grid>
+        <ProductReviews />
       </Grid>
     </Layout>
   )

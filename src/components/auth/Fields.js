@@ -34,6 +34,7 @@ export default function Fields({
   disabled,
   fullWidth,
   settings,
+  noError,
   xs
 }) {
   const classes = useStyles({ isWhite, fullWidth, settings, xs})
@@ -49,18 +50,19 @@ export default function Fields({
           value={values[field]}
           onChange={e => {
             const valid = validateHelper(e)
-            if (errors[field] || valid[field] === true) {
+            if (!noError && (errors[field] || valid[field] === true)) {
               setErrors({ ...errors, [field]: !valid[field] })
             }
             setValues({ ...values, [field]: e.target.value })
           }}
           placeholder={fields[field].placeholder}
           onBlur={e => {
+            if(noError) return
             const valid = validateHelper(e)
             setErrors({ ...errors, [field]: !valid[field] })
           }}
-          error={errors[field]}
-          helperText={errors[field] && fields[field].helperText}
+          error={noError ? false : errors[field]}
+          helperText={noError ? '' : errors[field] && fields[field].helperText}
           type={fields[field].type}
           disabled={disabled}
           classes={{ root: classes.textField }}

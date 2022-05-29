@@ -74,7 +74,7 @@ export default function ProductDetail({
             stock={stock}
           />
         </Grid>
-        <ProductReviews />
+        <ProductReviews product={id} />
       </Grid>
     </Layout>
   )

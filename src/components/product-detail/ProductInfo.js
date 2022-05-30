@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import clsx from 'clsx'
@@ -15,6 +15,9 @@ import Sizes from '../product-list/Sizes'
 import Swatches from '../product-list/Swatches'
 import QtyButton from '../product-list/QtyButton'
 import { colorIndex } from '../product-list/ProductFrameGrid'
+
+import { UserContext, FeedbackContext } from '../../contexts'
+import { setSnackbar } from '../../contexts/actions'
 
 
 const useStyles = makeStyles(theme => ({
@@ -124,9 +127,12 @@ export default function ProductInfo({
   variants,
   selectedVariant,
   setSelectedVariant,
-  stock
+  stock,
+  setEdit
 }) {
   const classes = useStyles()
+  const { user } = useContext(UserContext)
+  const { dispatchFeedback } = useContext(FeedbackContext)
   const [selectedSize, setSelectedSize] = useState(variants[selectedVariant].size)
   const [selectedColor, setSelectedColor] = useState(null)
 
@@ -169,6 +175,17 @@ export default function ProductInfo({
 
 
   const stockDisplay = getStockDisplay(stock, selectedVariant);
+
+  const handleEdit = () => {
+    if(user.username === 'Guest') {
+      dispatchFeedback({status: 'error', message: 'You must be logged in to leave a review'})
+      return
+    }
+
+    setEdit(true)
+    const reviewRef = document.getElementById('reviews')
+    reviewRef.scrollIntoView({ behavior: 'smooth'})
+  }
   
 
   return (
@@ -227,7 +244,7 @@ export default function ProductInfo({
                 <Rating number={3} />
               </Grid>
               <Grid item>
-                <Button>
+                <Button onClick={handleEdit}>
                   <Typography
                     variant="body2"
                     classes={{ root: classes.reviewButton }}

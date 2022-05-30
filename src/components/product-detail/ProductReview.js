@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Rating from '../home/Rating'
 import Fields from '../auth/Fields'
 
-import { UserContext, FeedbackContext } from '../../contexts'
+import {FeedbackContext } from '../../contexts'
 import { setSnackbar } from '../../contexts/actions'
 
 const useStyles = makeStyles(theme => ({
@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
         fontFamily: 'Montserrat',
         fontWeight: 600
     },
+    review: {
+      marginBottom: '3rem'
+    },
     buttonContainer: {
         marginTop: '2rem'
     },
@@ -47,15 +50,16 @@ const useStyles = makeStyles(theme => ({
       },
 }))
 
-export default function ProductReview({ product }) {
+export default function ProductReview({ product, review, setEdit, reviews, user }) {
     const classes = useStyles()
-    const { user } = useContext(UserContext)
     const { dispatchFeedback } = useContext(FeedbackContext)
-  const ratingRef = useRef(null)
+    const ratingRef = useRef(null)
 
-    const [values, setValues] = useState({ message: ''})
+  const found = !review ? reviews.find(review => review.user.username === user.username) : null
+
+    const [values, setValues] = useState({ message: found ? found.text :  ''})
     const [tempRating, setTempRating] = useState(0)
-    const [rating, setRating] = useState(null)
+    const [rating, setRating] = useState(review ? review.rating : found ? found.rating :  null)
     const [loading, setLoading] = useState(null)
 
 
@@ -85,33 +89,40 @@ export default function ProductReview({ product }) {
       })
     }
 
+    const buttonDisabled = found ? found.text === values.message && found.rating === rating : !rating
 
     return (
-      <Grid item container direction="column">
+      <Grid item container direction="column" classes={{ root: classes.review }}>
         <Grid item container justifyContent="space-between">
           <Grid item>
             <Typography variant="h4" classes={{ root: classes.light }}>
-              {user.username}
+              {review ? review.user.username : user.username}
             </Typography>
           </Grid>
           <Grid
             item
-            classes={{root: classes.rating}}
+            classes={{ root: clsx({ [classes.rating]: !review }) }}
             ref={ratingRef}
-            onClick={() => setRating(tempRating)}
+            onClick={() => (review ? null : setRating(tempRating))}
             onMouseLeave={() => {
-              if(tempRating > rating) {
+              if (tempRating > rating) {
                 setTempRating(rating)
               }
             }}
             onMouseMove={e => {
+              if (review) return
+
               const hoverRating =
                 ((ratingRef.current.getBoundingClientRect().left - e.clientX) /
-                ratingRef.current.getBoundingClientRect().width) * -5
-                setTempRating(Math.round(hoverRating * 2) / 2)
+                  ratingRef.current.getBoundingClientRect().width) *
+                -5
+              setTempRating(Math.round(hoverRating * 2) / 2)
             }}
           >
-            <Rating number={rating > tempRating ? rating : tempRating} size={2.5} />
+            <Rating
+              number={rating > tempRating ? rating : tempRating}
+              size={2.5}
+            />
           </Grid>
         </Grid>
         <Grid item>
@@ -119,32 +130,51 @@ export default function ProductReview({ product }) {
             variant="h5"
             classes={{ root: clsx(classes.date, classes.light) }}
           >
-            {new Date().toLocaleDateString()}
+            {review
+              ? new Date(review.createdAt).toLocaleString([], {
+                  day: "numeric",
+                  month: "numeric",
+                  year: "numeric",
+                })
+              : new Date().toLocaleDateString()}
           </Typography>
         </Grid>
         <Grid item>
-          <Fields
-            values={values}
-            setValues={setValues}
-            fields={fields}
-            fullWidth
-            noError
-          />
+          {review ? (
+            <Typography variant="body1">{review.text}</Typography>
+          ) : (
+            <Fields
+              values={values}
+              setValues={setValues}
+              fields={fields}
+              fullWidth
+              noError
+            />
+          )}
         </Grid>
-        <Grid item container classes={{ root: classes.buttonContainer }}>
-          <Grid item>
-            {loading === 'leave-review' ? <CircularProgress /> : (
-              <Button onClick={handleReview} disabled={!rating} variant="contained" color="primary">
-              <span className={classes.reviewButtonText}>Leave Review</span>
-            </Button>
-            )}
+        {review ? null : (
+          <Grid item container classes={{ root: classes.buttonContainer }}>
+            <Grid item>
+              {loading === "leave-review" ? (
+                <CircularProgress />
+              ) : (
+                <Button
+                  onClick={handleReview}
+                  disabled={buttonDisabled}
+                  variant="contained"
+                  color="primary"
+                >
+                  <span className={classes.reviewButtonText}>{found ? 'Edit' : 'Leave'} Review</span>
+                </Button>
+              )}
+            </Grid>
+            <Grid item>
+              <Button onClick={(() => setEdit(false))}>
+                <span className={classes.cancelButtonText}>Cancel</span>
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Button>
-              <span className={classes.cancelButtonText}>Cancel</span>
-            </Button>
-          </Grid>
-        </Grid>
+        )}
       </Grid>
     )
 }

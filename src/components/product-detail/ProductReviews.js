@@ -16,31 +16,49 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function ProductReviews({ product, edit, setEdit }) {
-    const classes = useStyles()
-    const { user } = useContext(UserContext)
-    const [reviews, setReviews] = useState([])
+  const classes = useStyles()
+  const { user } = useContext(UserContext)
+  const [reviews, setReviews] = useState([])
 
-    const { data } = useQuery(GET_REVIEWS, { variables: { id: product } })
+  const { data } = useQuery(GET_REVIEWS, { variables: { id: product } })
 
-    useEffect(() => {
-        if(data) {
-            setReviews(data.product.reviews)
-        }
-    }, [data])
+  useEffect(() => {
+    if (data) {
+      setReviews(data.product.reviews)
+    }
+  }, [data])
 
-    console.log(reviews)
+  console.log(reviews)
 
-    return (
-      <Grid
-        item
-        id='reviews'
-        container
-        direction="column"
-        classes={{ root: classes.reviews }}
-      >
-          {edit && <ProductReview user={user} reviews={reviews} product={product} setEdit={setEdit} />}
-        {reviews.filter(review => edit ? review.user.username !== user.username : review).map(review =>  ( 
-        <ProductReview reviews={reviews} key={review.id} product={product} review={review} /> ))}
-      </Grid>
-    )
+  return (
+    <Grid
+      item
+      id="reviews"
+      container
+      direction="column"
+      classes={{ root: classes.reviews }}
+    >
+      {edit && (
+        <ProductReview
+          user={user}
+          reviews={reviews}
+          setReviews={setReviews}
+          product={product}
+          setEdit={setEdit}
+        />
+      )}
+      {reviews
+        .filter(review =>
+          edit ? review.user.username !== user.username : review
+        )
+        .map(review => (
+          <ProductReview
+            reviews={reviews}
+            key={review.id}
+            product={product}
+            review={review}
+          />
+        ))}
+    </Grid>
+  )
 }

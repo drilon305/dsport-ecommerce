@@ -37,9 +37,15 @@ const useStyles = makeStyles(theme => ({
       marginBottom: '3rem'
     },
     buttonContainer: {
-        marginTop: '2rem'
+        marginTop: '1rem'
     },
-  
+    delete: {
+      backgroundColor: theme.palette.error.main,
+      marginLeft: '0.5rem',
+      '&:hover': {
+        backgroundColor: theme.palette.error.dark,
+      }
+    },
     "@global": {
         ".MuiInput-underline:before, .MuiInput-underline:hover:not(.Mui-disabled):before": {
           borderBottom: `2px solid ${theme.palette.primary.main}`,
@@ -68,44 +74,79 @@ export default function ProductReview({ product, review, setEdit, reviews, user,
         placeholder: 'Write your review.'
     }}
 
-    const handleReview = () => {
-      setLoading('leave-review')
+    const handleReview = option => {
+      setLoading(option === "delete" ? "delete-review" : "leave-review")
 
-      const axiosFunction = found ? axios.put : axios.post
-      const route = found ? `/reviews/${found.id}` : '/reviews'
+      const axiosFunction =
+        option === "delete" ? axios.delete : found ? axios.put : axios.post
+      const route =
+        found || option === "delete" ? `/reviews/${found.id}` : "/reviews"
 
-      axiosFunction(process.env.GATSBY_STRAPI_URL + route, {
-        text: values.message,
-        product,
-        rating
-      }, {
-        headers: { Authorization: `Bearer ${user.jwt}`}
-      }).then(response => {
-        setLoading(null)
+        const auth = { Authorization: `Bearer ${user.jwt}` }
 
-        dispatchFeedback(setSnackbar({status: 'success', message: 'Product Reviewed Successfully'}))
-
-        if(found) {
-          const newReviews = [...reviews]
-          const reviewIndex = newReviews.indexOf(found)
-
-          newReviews[reviewIndex] = response.data
-          setReviews(newReviews)
-          setEdit(false)
+      axiosFunction(
+        process.env.GATSBY_STRAPI_URL + route,
+        {
+          text: values.message,
+          product,
+          rating,
+          headers: option === 'delete' ? auth : undefined
+        },
+        {
+          headers: auth,
         }
+      )
+        .then(response => {
+          setLoading(null)
 
-      }).catch(error => {
-        setLoading(null)
-        console.error(error)
+          dispatchFeedback(
+            setSnackbar({
+              status: "success",
+              message: `${
+                option === "delete" ? "Reviewed Deleted" : "Product Reviewed"
+              } Successfully`,
+            })
+          )
 
-        dispatchFeedback(setSnackbar({status: 'error', message: 'There was a problem leaving your review. Please try again.'}))
-      })
+
+            let newReviews = [...reviews]
+            const reviewIndex = newReviews.indexOf(found)
+
+            if(option === 'delete') {
+              newReviews = newReviews.filter(review => review !== found)
+            } else if (found) {
+              newReviews[reviewIndex] = response.data
+            } else {
+              newReviews = [response.data, ...newReviews]
+            }
+
+            setReviews(newReviews)
+            setEdit(false)
+          
+        })
+        .catch(error => {
+          setLoading(null)
+          console.error(error)
+
+          dispatchFeedback(
+            setSnackbar({
+              status: "error",
+              message:
+                `There was a problem ${option === 'delete' ? 'removing' : 'leaving'} your review. Please try again.`,
+            })
+          )
+        })
     }
 
     const buttonDisabled = found ? found.text === values.message && found.rating === rating : !rating
 
     return (
-      <Grid item container direction="column" classes={{ root: classes.review }}>
+      <Grid
+        item
+        container
+        direction="column"
+        classes={{ root: classes.review }}
+      >
         <Grid item container justifyContent="space-between">
           <Grid item>
             <Typography variant="h4" classes={{ root: classes.light }}>
@@ -177,12 +218,29 @@ export default function ProductReview({ product, review, setEdit, reviews, user,
                   variant="contained"
                   color="primary"
                 >
-                  <span className={classes.reviewButtonText}>{found ? 'Edit' : 'Leave'} Review</span>
+                  <span className={classes.reviewButtonText}>
+                    {found ? "Edit" : "Leave"} Review
+                  </span>
                 </Button>
               )}
             </Grid>
+            {found ? (
+              <Grid item>
+                {loading === "delete-review" ? (
+                  <CircularProgress />
+                ) : (
+                  <Button
+                    onClick={() => handleReview("delete")}
+                    variant="contained"
+                    classes={{ root: classes.delete }}
+                  >
+                    <span className={classes.reviewButtonText}>Delete</span>
+                  </Button>
+                )}
+              </Grid>
+            ) : null}
             <Grid item>
-              <Button onClick={(() => setEdit(false))}>
+              <Button onClick={() => setEdit(false)}>
                 <span className={classes.cancelButtonText}>Cancel</span>
               </Button>
             </Grid>

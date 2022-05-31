@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
       },
 }))
 
-export default function ProductReview({ product, review, setEdit, reviews, user }) {
+export default function ProductReview({ product, review, setEdit, reviews, user, setReviews }) {
     const classes = useStyles()
     const { dispatchFeedback } = useContext(FeedbackContext)
     const ratingRef = useRef(null)
@@ -71,7 +71,10 @@ export default function ProductReview({ product, review, setEdit, reviews, user 
     const handleReview = () => {
       setLoading('leave-review')
 
-      axios.post(process.env.GATSBY_STRAPI_URL + '/reviews', {
+      const axiosFunction = found ? axios.put : axios.post
+      const route = found ? `/reviews/${found.id}` : '/reviews'
+
+      axiosFunction(process.env.GATSBY_STRAPI_URL + route, {
         text: values.message,
         product,
         rating
@@ -81,6 +84,16 @@ export default function ProductReview({ product, review, setEdit, reviews, user 
         setLoading(null)
 
         dispatchFeedback(setSnackbar({status: 'success', message: 'Product Reviewed Successfully'}))
+
+        if(found) {
+          const newReviews = [...reviews]
+          const reviewIndex = newReviews.indexOf(found)
+
+          newReviews[reviewIndex] = response.data
+          setReviews(newReviews)
+          setEdit(false)
+        }
+
       }).catch(error => {
         setLoading(null)
         console.error(error)
@@ -131,7 +144,7 @@ export default function ProductReview({ product, review, setEdit, reviews, user 
             classes={{ root: clsx(classes.date, classes.light) }}
           >
             {review
-              ? new Date(review.createdAt).toLocaleString([], {
+              ? new Date(review.updatedAt).toLocaleString([], {
                   day: "numeric",
                   month: "numeric",
                   year: "numeric",

@@ -10,6 +10,7 @@ query getDetails($id: ID!) {
 }
 `
 
+
 export const GET_REVIEWS = gql`
   query getReviews($id: ID!) {
     product(id: $id) {

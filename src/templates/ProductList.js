@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect} from 'react'
 import Fab from '@material-ui/core/Fab'
-
 import Pagination from '@material-ui/lab/Pagination'
+import PaginationItem from '@material-ui/lab/PaginationItem'
 import Grid from '@material-ui/core/Grid'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
-import {makeStyles} from '@material-ui/core/styles'
+import {makeStyles, styled} from '@material-ui/core/styles'
 import { graphql } from 'gatsby'
 
 import Layout from "../components/ui/layout"
@@ -33,17 +33,22 @@ const useStyles = makeStyles(theme => ({
       marginTop: '1rem',
     },
   },
-  "@global": {
-    ".MuiPaginationItem-root": {
-      fontFamily: "Montserrat",
-      fontSize: "2rem",
-      color: theme.palette.primary.main,
-      "&.Mui-selected": {
-        color: '#fff',
-      },
-    },
-  },
 }))
+
+export const StyledPagination = props => {
+
+   const StyledPaginationItem = styled(PaginationItem)(({ theme }) => ({
+    fontFamily: "Montserrat",
+    fontSize: "2rem",
+    color: theme.palette.primary.main,
+    "&.Mui-selected": {
+      color: '#fff',
+    },
+  }))
+
+  return <Pagination {...props}  renderItem={item => <StyledPaginationItem {...item} />}/>
+}
+
 
 
 
@@ -72,8 +77,6 @@ export default function ProductList({
     scrollRef.current.scrollIntoView({ behavior: 'smooth' })
   }
 
-
-  
 
   useEffect(() => {
     setPage(1)
@@ -174,7 +177,7 @@ export default function ProductList({
           products={products}
           content={content}
         />
-        <Pagination
+        <StyledPagination
           count={numPages}
           page={page}
           onChange={(e, newPage) => setPage(newPage)}

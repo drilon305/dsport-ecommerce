@@ -6,7 +6,7 @@ import { Link } from "gatsby"
 import Layout from "../components/ui/layout"
 import HeroBlock from '../components/home/HeroBlock'
 import PromotionalProduct from '../components/home/PromotionalProduct'
-import FeaturedProduct from '../components/home/FeaturedProduct'
+import FeaturedProducts from '../components/home/FeaturedProducts'
 import MarketingButtons from '../components/home/MarketingButtons'
 import CallToAction from '../components/home/CallToAction'
 
@@ -15,7 +15,7 @@ const IndexPage = () => (
   <Layout>
     <HeroBlock />
     <PromotionalProduct />
-    <FeaturedProduct />
+    <FeaturedProducts />
     <MarketingButtons />
     <CallToAction />
   </Layout>

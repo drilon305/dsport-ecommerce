@@ -8,7 +8,7 @@ import { UserContext } from '../../contexts'
 
 import ProductReview from './ProductReview'
 import { StyledPagination } from '../../templates/ProductList'
-import { GET_REVIEWS } from "../../apollo/queries"
+import { GET_REVIEWS } from '../../apollo/queries'
 
 const useStyles = makeStyles(theme => ({
     reviews: {

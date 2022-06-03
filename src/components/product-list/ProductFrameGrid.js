@@ -71,6 +71,7 @@ export default function ProductFrameGrid({
   setSelectedSize,
   setSelectedColor,
   hasStyles,
+  rating,
   stock
 }) {
   const classes = useStyles()
@@ -135,6 +136,7 @@ export default function ProductFrameGrid({
         setSelectedColor={setSelectedColor}
         hasStyles={hasStyles}
         stock={stock}
+        rating={rating}
         imageIndex={imageIndex}
       />
     </Grid>

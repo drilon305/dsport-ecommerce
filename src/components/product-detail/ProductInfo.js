@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
-import favorite from '../../images/favorite.svg'
+import Favorite from '../../images/Favorite'
 import subscription from '../../images/subscription.svg'
 import Rating from '../home/Rating'
 
@@ -20,7 +20,7 @@ import QtyButton from '../product-list/QtyButton'
 import { colorIndex } from '../product-list/ProductFrameGrid'
 
 import { UserContext, FeedbackContext } from '../../contexts'
-import { setSnackbar } from '../../contexts/actions'
+import { setSnackbar, setUser } from '../../contexts/actions'
 
 
 const useStyles = makeStyles(theme => ({
@@ -142,7 +142,7 @@ export default function ProductInfo({
   setEdit
 }) {
   const classes = useStyles()
-  const { user } = useContext(UserContext)
+  const { user, dispatchUser } = useContext(UserContext)
   const { dispatchFeedback } = useContext(FeedbackContext)
   const [selectedSize, setSelectedSize] = useState(variants[selectedVariant].size)
 
@@ -205,6 +205,10 @@ export default function ProductInfo({
     reviewRef.scrollIntoView({ behavior: "smooth" })
   }
 
+  const existingFavorite = user.favorites?.find(
+    favorite => favorite.product === product
+  )
+
   const handleFavorite = () => {
     if (user.username === "Guest") {
       dispatchFeedback(
@@ -218,24 +222,61 @@ export default function ProductInfo({
 
     setLoading(true)
 
-    axios.post(
-      process.env.GATSBY_STRAPI_URL + "/favorites",
+    const axiosFunction = existingFavorite ? axios.delete : axios.post
+    const route = existingFavorite
+      ? `/favorites/${existingFavorite.id}`
+      : "/favorites"
+
+    const auth = { Authorization: `Bearer ${user.jwt}` }
+
+    axiosFunction(
+      process.env.GATSBY_STRAPI_URL + route,
       {
-        product
+        product,
+        headers: existingFavorite ? auth : undefined,
       },
       {
-        headers: { Authorization: `Bearer ${user.jwt}` },
+        headers: auth,
       }
-    ).then(response => {
-      setLoading(false)
+    )
+      .then(response => {
+        setLoading(false)
 
-      dispatchFeedback(setSnackbar({status: 'success', message: 'Added Product To Favorites'}))
-    }).catch(error => {
-      setLoading(false)
-      console.error(error)
+        dispatchFeedback(
+          setSnackbar({
+            status: "success",
+            message: `${existingFavorite ? "Deleted" : "Added"} Product ${
+              existingFavorite ? "From" : "To"
+            } Favorites`,
+          })
+        )
 
-      dispatchFeedback(setSnackbar({status: 'error', message: 'There was a problem adding this item to favorites. Please try again.'}))
-    })
+        let newFavorites = [...user.favorites]
+
+        if (existingFavorite) {
+          newFavorites = newFavorites.filter(favorite => favorite.id !== existingFavorite.id)
+        } else {
+          newFavorites.push({ id: response.data.id, product: response.data.product.id })
+        }
+
+        dispatchUser(setUser({ ...user, favorites: newFavorites }))
+
+      })
+      .catch(error => {
+        setLoading(false)
+        console.error(error)
+
+        dispatchFeedback(
+          setSnackbar({
+            status: "error",
+            message: `There was a problem ${
+              existingFavorite ? "removing" : "adding"
+            } this item ${
+              existingFavorite ? "from" : "to"
+            } favorites. Please try again.`,
+          })
+        )
+      })
   }
 
   return (
@@ -255,17 +296,15 @@ export default function ProductInfo({
       >
         <Grid item>
           {loading ? (
-            <CircularProgress size='4rem ' />
+            <CircularProgress size="4rem " />
           ) : (
             <IconButton
               onClick={handleFavorite}
               classes={{ root: classes.iconButton }}
             >
-              <img
-                src={favorite}
-                alt="add item to favroites"
-                className={classes.icon}
-              />
+              <span className={classes.icon}>
+                <Favorite filled={existingFavorite} />
+              </span>
             </IconButton>
           )}
         </Grid>

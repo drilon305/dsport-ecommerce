@@ -218,7 +218,7 @@ export default function ProductInfo({
         classes={{ root: classes.background }}
       >
         <Grid item classes={{root: classes.iconWrapper}}>
-          <Favorite size={3} product={product} />
+          <Favorite size={3} variant={variants[selectedVariant].id} noPadding />
         </Grid>
         <Grid item classes={{root: classes.iconWrapper}}>
           <img

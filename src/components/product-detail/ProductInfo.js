@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react'
+import axios from 'axios'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+import CircularProgress from "@material-ui/core/CircularProgress"
 import clsx from 'clsx'
 import Chip from '@material-ui/core/Chip'
 import Typography from '@material-ui/core/Typography'
@@ -95,6 +98,12 @@ const useStyles = makeStyles(theme => ({
     actionsContainer: {
       padding: '0 1rem',
     },
+    iconButton: {
+      padding: 0,
+      '&:hover': {
+        backgroundColor: 'transparent'
+      },
+    },
     'global': {
       '.MuiButtonGroup-groupedOutlinedVertical:not(:first-child)': {
         marginTop: 0,
@@ -129,13 +138,16 @@ export default function ProductInfo({
   setSelectedVariant,
   stock,
   rating,
+  product,
   setEdit
 }) {
   const classes = useStyles()
   const { user } = useContext(UserContext)
   const { dispatchFeedback } = useContext(FeedbackContext)
   const [selectedSize, setSelectedSize] = useState(variants[selectedVariant].size)
+
   const [selectedColor, setSelectedColor] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'));
 
@@ -178,16 +190,53 @@ export default function ProductInfo({
   const stockDisplay = getStockDisplay(stock, selectedVariant);
 
   const handleEdit = () => {
-    if(user.username === 'Guest') {
-      dispatchFeedback({status: 'error', message: 'You must be logged in to leave a review'})
+    if (user.username === "Guest") {
+      dispatchFeedback(
+        setSnackbar({
+          status: "error",
+          message: "You must be logged in to leave a review.",
+        })
+      )
       return
     }
 
     setEdit(true)
-    const reviewRef = document.getElementById('reviews')
-    reviewRef.scrollIntoView({ behavior: 'smooth'})
+    const reviewRef = document.getElementById("reviews")
+    reviewRef.scrollIntoView({ behavior: "smooth" })
   }
-  
+
+  const handleFavorite = () => {
+    if (user.username === "Guest") {
+      dispatchFeedback(
+        setSnackbar({
+          status: "error",
+          message: "You must be logged in to add an item to favorites.",
+        })
+      )
+      return
+    }
+
+    setLoading(true)
+
+    axios.post(
+      process.env.GATSBY_STRAPI_URL + "/favorites",
+      {
+        product
+      },
+      {
+        headers: { Authorization: `Bearer ${user.jwt}` },
+      }
+    ).then(response => {
+      setLoading(false)
+
+      dispatchFeedback(setSnackbar({status: 'success', message: 'Added Product To Favorites'}))
+    }).catch(error => {
+      setLoading(false)
+      console.error(error)
+
+      dispatchFeedback(setSnackbar({status: 'error', message: 'There was a problem adding this item to favorites. Please try again.'}))
+    })
+  }
 
   return (
     <Grid
@@ -205,11 +254,20 @@ export default function ProductInfo({
         classes={{ root: classes.background }}
       >
         <Grid item>
-          <img
-            src={favorite}
-            alt="add item to favroites"
-            className={classes.icon}
-          />
+          {loading ? (
+            <CircularProgress size='4rem ' />
+          ) : (
+            <IconButton
+              onClick={handleFavorite}
+              classes={{ root: classes.iconButton }}
+            >
+              <img
+                src={favorite}
+                alt="add item to favroites"
+                className={classes.icon}
+              />
+            </IconButton>
+          )}
         </Grid>
         <Grid item>
           <img
@@ -228,7 +286,7 @@ export default function ProductInfo({
         <Grid
           item
           container
-          direction={matchesXS ? 'column' : 'row'}
+          direction={matchesXS ? "column" : "row"}
           justifyContent="space-between"
           classes={{
             root: clsx(classes.detailsContainer, classes.sectionContainer),
@@ -278,10 +336,12 @@ export default function ProductInfo({
         <Grid
           item
           container
-          direction={matchesXS ? 'column' : 'row'}
-          justifyContent={matchesXS ? 'space-around' : 'space-between'}
-          alignItems={matchesXS ? 'flex-start' : 'center'}
-          classes={{ root: clsx(classes.actionsContainer, classes.sectionContainer) }}
+          direction={matchesXS ? "column" : "row"}
+          justifyContent={matchesXS ? "space-around" : "space-between"}
+          alignItems={matchesXS ? "flex-start" : "center"}
+          classes={{
+            root: clsx(classes.actionsContainer, classes.sectionContainer),
+          }}
         >
           <Grid item>
             <Grid container direction="column">
@@ -305,7 +365,12 @@ export default function ProductInfo({
             </Grid>
           </Grid>
           <Grid item>
-            <QtyButton stock={stock} selectedVariant={selectedVariant} name={name} variants={variants} />
+            <QtyButton
+              stock={stock}
+              selectedVariant={selectedVariant}
+              name={name}
+              variants={variants}
+            />
           </Grid>
         </Grid>
       </Grid>

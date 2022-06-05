@@ -9,6 +9,7 @@ import { useSpring, useSprings, animated } from 'react-spring'
 import useResizeAware from 'react-resize-aware'
 
 import Settings from './Settings'
+import Favorites from './Favorites'
 import OrderHistory from './OrderHistory'
 import { UserContext } from '../../contexts'
 import { setUser } from '../../contexts/actions'
@@ -90,7 +91,7 @@ export default function SetttingsPortal() {
   const buttons = [
     { label: "Settings", icon: settingsIcon, component: Settings, large: true },
     { label: "Order History", icon: orderHistoryIcon, component: OrderHistory },
-    { label: "Favorites", icon: favoritesIcon },
+    { label: "Favorites", icon: favoritesIcon, component: Favorites },
     { label: "Subscriptions", icon: subscriptionIcon },
   ]
 

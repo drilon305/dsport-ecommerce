@@ -76,6 +76,7 @@ export default function ProductDetail({
             setSelectedVariant={setSelectedVariant}
             stock={stock}
             rating={rating}
+            product={id}
             setEdit={setEdit}
           />
         </Grid>

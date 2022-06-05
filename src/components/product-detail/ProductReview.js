@@ -155,7 +155,7 @@ export default function ProductReview({
 
   return (
     <Grid item container direction="column" classes={{ root: classes.review }}>
-      <Grid item container justify="space-between">
+      <Grid item container justifyContent="space-between">
         <Grid item>
           <Typography variant="h4" classes={{ root: classes.light }}>
             {review ? review.user.username : user.username}

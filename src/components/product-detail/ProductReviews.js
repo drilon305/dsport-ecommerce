@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { useQuery } from '@apollo/client'
 
-import { UserContext } from '../../contexts'
+import { UserContext } from "../../contexts"
 
 import ProductReview from './ProductReview'
 import { StyledPagination } from '../../templates/ProductList'

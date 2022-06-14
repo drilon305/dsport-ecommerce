@@ -46,7 +46,7 @@ export default function OrderHistory({ setSelectedSetting }) {
 
   const createData = data =>
     data.map(item => ({
-      shipping: `${item.shippingInfo.name}`,
+      shipping: `${item.shippingInfo.name},\n${item.shippingAddress.state}`,
       order: `#${item.id
         .slice(item.id.length - 10, item.id.length)
         .toUpperCase()}`,

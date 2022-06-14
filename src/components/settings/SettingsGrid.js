@@ -36,8 +36,12 @@ const useStyles = makeStyles(theme => ({
         ".MuiDataGrid-root .MuiDataGrid-window": {
             "overflow": "auto"
         },
+        ".MuiDataGrid-root .MuiDataGrid-renderingZone": {
+          "max-height": "100% !important",
+        },
         ".MuiDataGrid-root .MuiDataGrid-cell": {
              padding: "1rem",
+             "max-height": "100% !important",
             "padding-right": "calc(1rem + 26px)",
             display: "flex",
             "justify-content": "center",
@@ -49,8 +53,7 @@ const useStyles = makeStyles(theme => ({
             'justify-content': 'center'
         },
         ".MuiDataGrid-root .MuiDataGrid-row": {
-            'max-height': '100% !important',
-            
+            'max-height': '100% !important',  
         },
         ".MuiDataGrid-root .MuiDataGrid-footerContainer": {
             "margin-top": "-11rem",
@@ -76,6 +79,8 @@ const useStyles = makeStyles(theme => ({
         },
     },
 }))
+
+
 
 export default function SettingsGrid({
   setSelectedSetting,

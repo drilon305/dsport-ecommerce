@@ -14,7 +14,7 @@ import Cart from '../../images/Cart'
 
 const useStyles = makeStyles(theme => ({
         qtyText: {
-            color: ({ isCart }) => isCart ? theme.palette.secondary.main : '#fff'
+            color: ({ white }) => white ? theme.palette.secondary.main : '#fff'
         },
         mainGroup: {
             height: '3rem',
@@ -22,15 +22,19 @@ const useStyles = makeStyles(theme => ({
         editButtons: {
             height: '1.525rem',
             borderRadius: 0,
-            backgroundColor: ({ isCart }) => isCart ? '#fff' : theme.palette.secondary.main,
-            borderLeft: ({ isCart }) => `2px solid ${ isCart ? theme.palette.secondary.main : '#fff'}`,
-            borderRight: '2px solid #fff',
+            backgroundColor: ({ white }) => white ? '#fff' : theme.palette.secondary.main,
+            borderLeft: ({ white }) => `2px solid ${ white ? theme.palette.secondary.main : '#fff'}`,
+            borderRight: ({ round }) => round ? 0 : '2px solid #fff',
             borderBottom: 'none',
-            borderTop: 'none'
+            borderRadius: ({ round }) => round ? '0px 50px 50px 0px' : 0,
+            borderTop: 'none',
+          '&:hover': {
+            backgroundColor: ({ white }) => white ? '#fff' : theme.palette.secondary.light
+          },
         },
         endButtons: {
             borderRadius: 50,
-            backgroundColor: ({ isCart }) => isCart ? '#fff' : theme.palette.secondary.main,
+            backgroundColor: ({ white }) => white ? '#fff' : theme.palette.secondary.main,
             border: 'none'
         },
         cartButton: {
@@ -41,11 +45,11 @@ const useStyles = makeStyles(theme => ({
             marginTop: '-0.25rem'
         },
         minusButton: {
-            borderTop: ({ isCart }) => `2px solid ${ isCart ? theme.palette.secondary.main :  '#fff'}`
+            borderTop: ({ white }) => `2px solid ${ white ? theme.palette.secondary.main :  '#fff'}`
         },
         qtyButton: {
           "&:hover": {
-            backgroundColor: ({ isCart }) => isCart ? '#fff' : theme.palette.secondary.main
+            backgroundColor: ({ white }) => white ? '#fff' : theme.palette.secondary.main
           },
         },
         badge: {
@@ -62,13 +66,24 @@ const useStyles = makeStyles(theme => ({
         }
 }))
 
-export default function QtyButton({ stock, variants, selectedVariant,  name, isCart }) {
+export default function QtyButton({
+  stock,
+  variants,
+  selectedVariant,
+  name,
+  isCart,
+  white,
+  hideCartButton,
+  round
+}) {
   const { cart, dispatchCart } = useContext(CartContext)
-  const existingItem = cart.find(item => item.variant === variants[selectedVariant])
-  const classes = useStyles({ isCart })
+  const existingItem = isCart ? cart.find(
+    item => item.variant === variants[selectedVariant]
+  ) : null
+
+  const classes = useStyles({ white, round })
   const [qty, setQty] = useState(isCart ? existingItem.qty : 1)
   const [success, setSuccess] = useState(false)
-  
 
   const handleChange = direction => {
     if (qty === stock[selectedVariant].qty && direction === "up") {
@@ -83,14 +98,14 @@ export default function QtyButton({ stock, variants, selectedVariant,  name, isC
 
     setQty(newQty)
 
-    if (isCart) {
-      if(direction === 'up') {
+    if (white) {
+      if (direction === "up") {
         dispatchCart(addToCart(variants[selectedVariant], 1, name))
-      } else if (direction === 'down') { 
+      } else if (direction === "down") {
         dispatchCart(removeFromCart(variants[selectedVariant], 1))
-        }
       }
     }
+  }
 
   const handleCart = () => {
     setSuccess(true)
@@ -118,12 +133,11 @@ export default function QtyButton({ stock, variants, selectedVariant,  name, isC
   useEffect(() => {
     let timer
 
-    if(success) {
+    if (success) {
       timer = setTimeout(() => setSuccess(false), 1500)
     }
 
     return () => clearTimeout(timer)
-
   }, [success])
 
   return (
@@ -155,26 +169,31 @@ export default function QtyButton({ stock, variants, selectedVariant,  name, isC
             </Typography>
           </Button>
         </ButtonGroup>
-        {isCart ? null : ( <Button
-          onClick={handleCart}
-          disabled={stock ? stock[selectedVariant].qty === 0 : true}
-          classes={{ root: clsx(classes.endButtons, classes.cartButton, {
-            [classes.success]: success
-          }) }}
-        >
-          {success ? <Typography variant='h3' classes={{ root: classes.qtyText }}>
-            ✓
-          </Typography> : (
-            <Badge
-            overlap="circular"
-              badgeContent="+"
-              classes={{ badge: classes.badge }}
-            >
-              <Cart color="#fff" />
-            </Badge>
-          )}
-
-        </Button>) }
+        {hideCartButton ? null : (
+          <Button
+            onClick={handleCart}
+            disabled={stock ? stock[selectedVariant].qty === 0 : true}
+            classes={{
+              root: clsx(classes.endButtons, classes.cartButton, {
+                [classes.success]: success,
+              }),
+            }}
+          >
+            {success ? (
+              <Typography variant="h3" classes={{ root: classes.qtyText }}>
+                ✓
+              </Typography>
+            ) : (
+              <Badge
+                overlap="circular"
+                badgeContent="+"
+                classes={{ badge: classes.badge }}
+              >
+                <Cart color="#fff" />
+              </Badge>
+            )}
+          </Button>
+        )}
       </ButtonGroup>
     </Grid>
   )

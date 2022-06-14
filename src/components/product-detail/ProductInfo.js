@@ -9,10 +9,9 @@ import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
 
-import subscription from '../../images/subscription.svg'
 import Rating from '../home/Rating'
 import Favorite from '../ui/favorite'
-
+import Subscription from '../ui/subscription'
 import Sizes from '../product-list/Sizes'
 import Swatches from '../product-list/Swatches'
 import QtyButton from '../product-list/QtyButton'
@@ -221,11 +220,7 @@ export default function ProductInfo({
           <Favorite size={3} variant={variants[selectedVariant].id} noPadding />
         </Grid>
         <Grid item classes={{root: classes.iconWrapper}}>
-          <img
-            src={subscription}
-            alt="add item to subscriptions"
-            className={classes.icon}
-          />
+        <Subscription size={4} />
         </Grid>
       </Grid>
       <Grid

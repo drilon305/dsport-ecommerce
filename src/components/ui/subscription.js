@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import clsx from 'clsx'
 import Grid from '@material-ui/core/Grid'
 import Dialog from '@material-ui/core/Dialog'
@@ -12,7 +12,8 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import QtyButton from '../product-list/QtyButton'
 
-import { CartContext } from '../../contexts'
+import { CartContext, FeedbackContext } from '../../contexts'
+import { setSnackbar, addToCart } from '../../contexts/actions'
 
 import SubscriptionIcon from '../../images/Subscription'
 
@@ -69,14 +70,37 @@ const useStyles = makeStyles(theme => ({
     menuItem: {
       color: '#fff'
     },
+    
 }))
 
-export default function Subscription({ size, stock, selectedVariant }) {
+export default function Subscription({
+  size,
+  stock,
+  selectedVariant,
+  variant,
+  name,
+}) {
   const classes = useStyles({ size })
   const [open, setOpen] = useState(false)
-  const [frequency, setFrequency] = useState('Month')
+  const [qty, setQty] = useState(1)
+  const [frequency, setFrequency] = useState("Month")
+  const { dispatchFeedback } = useContext(FeedbackContext)
+  const { dispatchCart } = useContext(CartContext)
 
-  const frequencies = ['Week', 'Two Weeks', 'Month', 'Three Months', 'Six Months', 'Year']
+  const frequencies = [
+    "Week",
+    "Two Weeks",
+    "Month",
+    "Three Months",
+    "Six Months",
+    "Year",
+  ]
+
+  const handleCart = () => {
+    dispatchCart(addToCart(variant, qty, name, stock[selectedVariant].qty, frequency))
+    setOpen(false)
+    dispatchFeedback(setSnackbar({ status: 'success', message: 'Subscription Added To Cart.'}))
+  }
 
   return (
     <>
@@ -109,6 +133,7 @@ export default function Subscription({ size, stock, selectedVariant }) {
             <Grid item>
               <QtyButton
                 stock={stock}
+                override={{ value: qty, setValue: setQty}}
                 selectedVariant={selectedVariant}
                 white
                 hideCartButton
@@ -119,7 +144,7 @@ export default function Subscription({ size, stock, selectedVariant }) {
           <Grid
             item
             container
-            alignItems='center'
+            alignItems="center"
             justifyContent="space-between"
             classes={{ root: clsx(classes.row, classes.light) }}
           >
@@ -128,9 +153,9 @@ export default function Subscription({ size, stock, selectedVariant }) {
             </Grid>
             <Grid item>
               <Select
-              classes={{select: classes.select}}
-              disableUnderline
-              MenuProps={{classes: { paper: classes.menu}}}
+                classes={{ select: classes.select }}
+                disableUnderline
+                MenuProps={{ classes: { paper: classes.menu } }}
                 value={frequency}
                 IconComponent={() => null}
                 onChange={event => setFrequency(event.target.value)}
@@ -145,7 +170,11 @@ export default function Subscription({ size, stock, selectedVariant }) {
                 )}
               >
                 {frequencies.map(frequency => (
-                  <MenuItem classes={{root: classes.menuItem}} key={frequency} value={frequency}>
+                  <MenuItem
+                    classes={{ root: classes.menuItem }}
+                    key={frequency}
+                    value={frequency}
+                  >
                     {frequency}
                   </MenuItem>
                 ))}
@@ -155,6 +184,7 @@ export default function Subscription({ size, stock, selectedVariant }) {
           <Grid item>
             <Button
               variant="contained"
+              onClick={handleCart}
               color="secondary"
               classes={{ root: classes.cartButton }}
             >

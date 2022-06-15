@@ -1,126 +1,124 @@
-import React, { useEffect, useState, useContext } from 'react'
-import axios from 'axios'
-import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
-import clsx from 'clsx'
-import Chip from '@material-ui/core/Chip'
-import Typography from '@material-ui/core/Typography'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
-import { makeStyles } from '@material-ui/core/styles'
+import React, { useEffect, useState, useContext } from "react"
+import axios from "axios"
+import Grid from "@material-ui/core/Grid"
+import Button from "@material-ui/core/Button"
+import clsx from "clsx"
+import Chip from "@material-ui/core/Chip"
+import Typography from "@material-ui/core/Typography"
+import useMediaQuery from "@material-ui/core/useMediaQuery"
+import { makeStyles } from "@material-ui/core/styles"
 
+import Rating from "../home/Rating"
+import Favorite from "../ui/favorite"
+import Subscription from "../ui/subscription"
+import Sizes from "../product-list/Sizes"
+import Swatches from "../product-list/Swatches"
+import QtyButton from "../product-list/QtyButton"
+import { colorIndex } from "../product-list/ProductFrameGrid"
 
-import Rating from '../home/Rating'
-import Favorite from '../ui/favorite'
-import Subscription from '../ui/subscription'
-import Sizes from '../product-list/Sizes'
-import Swatches from '../product-list/Swatches'
-import QtyButton from '../product-list/QtyButton'
-import { colorIndex } from '../product-list/ProductFrameGrid'
-
-import { UserContext, FeedbackContext } from '../../contexts'
-import { setSnackbar } from '../../contexts/actions'
-
+import { UserContext, FeedbackContext } from "../../contexts"
+import { setSnackbar } from "../../contexts/actions"
 
 const useStyles = makeStyles(theme => ({
-    background: {
-        backgroundColor: theme.palette.secondary.main,
-        height: '38rem',
-        width: '28rem',
-        [theme.breakpoints.down('md')]: {
-          width: '100%'
-        },
-        [theme.breakpoints.down('xs')]: {
-          height: '55rem'
-        },
+  background: {
+    backgroundColor: theme.palette.secondary.main,
+    height: "38rem",
+    width: "28rem",
+    [theme.breakpoints.down("md")]: {
+      width: "100%",
     },
-    center: {
-        backgroundColor: theme.palette.primary.main,
-        height: '30rem',
-        width: '38rem',
-        position: 'absolute',
-        [theme.breakpoints.down('lg')]: {
-          width: '35rem'
-        },
-        [theme.breakpoints.down('md')]: {
-          width: '100%'
-        },
-        [theme.breakpoints.down('xs')]: {
-          height: '45rem'
-        },
+    [theme.breakpoints.down("xs")]: {
+      height: "55rem",
     },
-    icon: {
-        height: '3rem',
-        width: '3rem',
+  },
+  center: {
+    backgroundColor: theme.palette.primary.main,
+    height: "30rem",
+    width: "38rem",
+    position: "absolute",
+    [theme.breakpoints.down("lg")]: {
+      width: "35rem",
     },
-    iconWrapper: {
-      margin: '0.5rem 1rem'
+    [theme.breakpoints.down("md")]: {
+      width: "100%",
     },
-    sectionContainer: {
-      height: 'calc(100% / 3)',
+    [theme.breakpoints.down("xs")]: {
+      height: "45rem",
     },
-    descriptionContainer: {
-      backgroundColor: theme.palette.secondary.main,
-      overflowY: 'auto',
-      padding: '0.5rem 1rem'
+  },
+  icon: {
+    height: "3rem",
+    width: "3rem",
+  },
+  iconWrapper: {
+    margin: "0.5rem 1rem",
+  },
+  sectionContainer: {
+    height: "calc(100% / 3)",
+  },
+  descriptionContainer: {
+    backgroundColor: theme.palette.secondary.main,
+    overflowY: "auto",
+    padding: "0.5rem 1rem",
+  },
+  name: {
+    color: "#fff",
+  },
+  reviewButton: {
+    textTransform: "none",
+  },
+  detailsContainer: {
+    paddingLeft: "1rem",
+  },
+  chipContainer: {
+    marginTop: "1rem",
+    [theme.breakpoints.down("xs")]: {
+      marginTop: 0,
+      marginBottom: "1rem",
     },
-    name: {
-      color: '#fff',
-    },
-    reviewButton: {
-      textTransform: 'none',
-    },
-    detailsContainer: {
-      paddingLeft: '1rem'
-    },
-    chipContainer: {
-      marginTop: '1rem',
-      [theme.breakpoints.down('xs')]: {
-        marginTop: 0,
-        marginBottom: '1rem'
-      },
-    },
-    chipRoot: {
-      height: '3rem',
-      width: '8rem',
-      borderRadius: 50,
-      marginRight: '1rem'
-    },
-    chipLabel: {
-      fontSize: '1.5rem'
-    },
-    stock: {
-      color: '#fff',
-      paddingLeft: '1rem'
-    },
-    sizesAndSwatches: {
-      maxWidth: '12.5rem',
-    },
-    actionsContainer: {
-      padding: '0 1rem',
-    },
-    'global': {
-      '.MuiButtonGroup-groupedOutlinedVertical:not(:first-child)': {
-        marginTop: 0,
+  },
+  chipRoot: {
+    height: "3rem",
+    width: "8rem",
+    borderRadius: 50,
+    marginRight: "1rem",
+  },
+  chipLabel: {
+    fontSize: "1.5rem",
+  },
+  stock: {
+    color: "#fff",
+    paddingLeft: "1rem",
+  },
+  sizesAndSwatches: {
+    maxWidth: "12.5rem",
+  },
+  actionsContainer: {
+    padding: "0 1rem",
+  },
+   "@global": {
+    ".MuiButtonGroup-groupedOutlinedVertical:not(:first-child)": {
+      marginTop: 0,
     },
   },
 }))
 
 export const getStockDisplay = (stock, variant) => {
-  switch(stock) {
+  switch (stock) {
     case undefined:
     case null:
-    return 'Loading Inventory...';
-    break
+      return "Loading Inventory..."
+      break
     case -1:
-      return 'Error Loading Inventory...';
-    break
+      return "Error Loading Inventory..."
+      break
     default:
-      if(stock[variant].qty === 0) {
-        return 'Out of Stock'
+      if (stock[variant].qty === 0) {
+        return "Out of Stock"
       } else {
-        return  `${stock[variant].qty} Currently In Stock`
+        return `${stock[variant].qty} Currently In Stock`
       }
-    break
+      break
   }
 }
 
@@ -133,18 +131,24 @@ export default function ProductInfo({
   stock,
   rating,
   product,
-  setEdit
+  setEdit,
 }) {
   const classes = useStyles()
   const { user, dispatchUser } = useContext(UserContext)
   const { dispatchFeedback } = useContext(FeedbackContext)
-  const [selectedSize, setSelectedSize] = useState(variants[selectedVariant].size)
+  const [selectedSize, setSelectedSize] = useState(
+    variants[selectedVariant].size
+  )
 
   const [selectedColor, setSelectedColor] = useState(null)
 
-  const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'));
+  const matchesXS = useMediaQuery(theme => theme.breakpoints.down("xs"))
 
-  const imageIndex = colorIndex({node: { variants }}, variants[selectedVariant], selectedColor )
+  const imageIndex = colorIndex(
+    { node: { variants } },
+    variants[selectedVariant],
+    selectedColor
+  )
 
   const sizes = []
   const colors = []
@@ -174,13 +178,12 @@ export default function ProductInfo({
   }, [selectedSize])
 
   useEffect(() => {
-    if(imageIndex !== -1) {
+    if (imageIndex !== -1) {
       setSelectedVariant(imageIndex)
     }
   }, [imageIndex])
 
-
-  const stockDisplay = getStockDisplay(stock, selectedVariant);
+  const stockDisplay = getStockDisplay(stock, selectedVariant)
 
   const handleEdit = () => {
     if (user.username === "Guest") {
@@ -198,9 +201,6 @@ export default function ProductInfo({
     reviewRef.scrollIntoView({ behavior: "smooth" })
   }
 
-
-  
-
   return (
     <Grid
       item
@@ -216,11 +216,17 @@ export default function ProductInfo({
         justifyContent="flex-end"
         classes={{ root: classes.background }}
       >
-        <Grid item classes={{root: classes.iconWrapper}}>
+        <Grid item classes={{ root: classes.iconWrapper }}>
           <Favorite size={3} variant={variants[selectedVariant].id} noPadding />
         </Grid>
-        <Grid item classes={{root: classes.iconWrapper}}>
-        <Subscription stock={stock} selectedVariant={selectedVariant} size={3} />
+        <Grid item classes={{ root: classes.iconWrapper }}>
+          <Subscription
+            stock={stock}
+            variant={variants[selectedVariant]}
+            name={name.split(' ')[0]}
+            selectedVariant={selectedVariant}
+            size={3}
+          />
         </Grid>
       </Grid>
       <Grid

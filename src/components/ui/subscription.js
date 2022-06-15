@@ -4,6 +4,8 @@ import Grid from '@material-ui/core/Grid'
 import Dialog from '@material-ui/core/Dialog'
 import Chip from '@material-ui/core/Chip'
 import Button from '@material-ui/core/Button'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
@@ -45,11 +47,36 @@ const useStyles = makeStyles(theme => ({
     dialog: {
         borderRadius: 0
     },
+    chipRoot: {
+      backgroundColor: '#fff',
+      height: '3rem',
+      borderRadius: 50,
+      '&:hover': {
+        cursor: 'pointer'
+      },
+    },
+    chipLabel: {
+      color: theme.palette.secondary.main
+    },
+    select: {
+     '&.MuiSelect-select': {
+      paddingRight: 0
+     },
+    },
+    menu: {
+      backgroundColor: theme.palette.primary.main
+    },
+    menuItem: {
+      color: '#fff'
+    },
 }))
 
 export default function Subscription({ size, stock, selectedVariant }) {
   const classes = useStyles({ size })
   const [open, setOpen] = useState(false)
+  const [frequency, setFrequency] = useState('Month')
+
+  const frequencies = ['Week', 'Two Weeks', 'Month', 'Three Months', 'Six Months', 'Year']
 
   return (
     <>
@@ -73,7 +100,7 @@ export default function Subscription({ size, stock, selectedVariant }) {
             item
             container
             justifyContent="space-between"
-            alignItems='center'
+            alignItems="center"
             classes={{ root: clsx(classes.row, classes.dark) }}
           >
             <Grid item>
@@ -92,11 +119,37 @@ export default function Subscription({ size, stock, selectedVariant }) {
           <Grid
             item
             container
+            alignItems='center'
             justifyContent="space-between"
             classes={{ root: clsx(classes.row, classes.light) }}
           >
             <Grid item>
               <Typography variant="h4">Deliver Every</Typography>
+            </Grid>
+            <Grid item>
+              <Select
+              classes={{select: classes.select}}
+              disableUnderline
+              MenuProps={{classes: { paper: classes.menu}}}
+                value={frequency}
+                IconComponent={() => null}
+                onChange={event => setFrequency(event.target.value)}
+                renderValue={selected => (
+                  <Chip
+                    label={selected}
+                    classes={{
+                      root: classes.chipRoot,
+                      label: classes.chipLabel,
+                    }}
+                  />
+                )}
+              >
+                {frequencies.map(frequency => (
+                  <MenuItem classes={{root: classes.menuItem}} key={frequency} value={frequency}>
+                    {frequency}
+                  </MenuItem>
+                ))}
+              </Select>
             </Grid>
           </Grid>
           <Grid item>

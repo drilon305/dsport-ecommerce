@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
             borderLeft: ({ white }) => `2px solid ${ white ? theme.palette.secondary.main : '#fff'}`,
             borderRight: ({ round }) => round ? 0 : '2px solid #fff',
             borderBottom: 'none',
-            borderRadius: ({ round }) => round ? '0px 50px 50px 0px' : 0,
+            borderRadius: ({ round }) => (round ? '0px 50px 50px 0px' : 0),
             borderTop: 'none',
           '&:hover': {
             backgroundColor: ({ white }) => white ? '#fff' : theme.palette.secondary.light
@@ -98,7 +98,7 @@ export default function QtyButton({
 
     setQty(newQty)
 
-    if (white) {
+    if (isCart) {
       if (direction === "up") {
         dispatchCart(addToCart(variants[selectedVariant], 1, name))
       } else if (direction === "down") {

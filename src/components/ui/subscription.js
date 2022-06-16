@@ -8,6 +8,7 @@ import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
+import useMediaQuery  from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
 import QtyButton from '../product-list/QtyButton'
@@ -25,7 +26,10 @@ const useStyles = makeStyles(theme => ({
     },
     row: {
         height: '4rem',
-        padding: '0 0.5rem'
+        padding: '0 0.5rem',
+        [theme.breakpoints.down('xs')]: {
+          height: 'auto'
+        },
     },
     light: {
         backgroundColor: theme.palette.primary.main
@@ -39,14 +43,24 @@ const useStyles = makeStyles(theme => ({
     cartButton: {
         height: '8rem',
         borderRadius: 0,
-        width: '100%'
+        width: '100%',
+        [theme.breakpoints.down('xs')]: {
+          height: 'auto'  
+          },
     },
     cartText: {
         color: '#fff',
-        fontSize: '4rem'
+        fontSize: '4rem',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '3.2rem'
+        },
+        [theme.breakpoints.down('xs')]: {
+          fontSize: '1.8rem'
+        },
     },
     dialog: {
-        borderRadius: 0
+        borderRadius: 0,
+        backgroundColor: theme.palette.primary.main
     },
     chipRoot: {
       backgroundColor: '#fff',
@@ -86,6 +100,7 @@ export default function Subscription({
   const [frequency, setFrequency] = useState("Month")
   const { dispatchFeedback } = useContext(FeedbackContext)
   const { dispatchCart } = useContext(CartContext)
+  const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
 
   const frequencies = [
     "Week",
@@ -113,13 +128,14 @@ export default function Subscription({
         </span>
       </IconButton>
       <Dialog
+      fullScreen={matchesXS}
         fullWidth
         maxWidth="md"
         open={open}
         onClose={() => setOpen(false)}
         classes={{ paper: classes.dialog }}
       >
-        <Grid container direction="column">
+        <Grid container direction="column" alignItems='center'>
           <Grid
             item
             container
@@ -144,7 +160,8 @@ export default function Subscription({
           <Grid
             item
             container
-            alignItems="center"
+            alignItems={matchesXS ? "flex-start" : "center"}
+            direction={matchesXS ? 'column' : 'row'}
             justifyContent="space-between"
             classes={{ root: clsx(classes.row, classes.light) }}
           >
@@ -193,6 +210,15 @@ export default function Subscription({
               </Typography>
             </Button>
           </Grid>
+          {matchesXS && (
+          <Grid item>
+            <Button onClick={() => setOpen(false)}>
+              <Typography  variant='body2'>
+                Cancel
+              </Typography>
+            </Button>
+          </Grid>
+          )}
         </Grid>
       </Dialog>
     </>

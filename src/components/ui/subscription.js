@@ -84,7 +84,9 @@ const useStyles = makeStyles(theme => ({
     menuItem: {
       color: '#fff'
     },
-    
+    buttonWrapper: {
+      width: '100%'
+    },
 }))
 
 export default function Subscription({
@@ -198,7 +200,7 @@ export default function Subscription({
               </Select>
             </Grid>
           </Grid>
-          <Grid item>
+          <Grid item classes={{root: classes.buttonWrapper}}>
             <Button
               variant="contained"
               onClick={handleCart}

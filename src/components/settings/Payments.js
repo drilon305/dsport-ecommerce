@@ -53,11 +53,12 @@ const useStyles = makeStyles(theme => ({
         },
     },
     paymentContainer: {
+      height: '100%',
       display: ({ checkout, selectedStep, stepNumber }) => checkout && selectedStep !== stepNumber ? 'none' : 'flex',
       borderLeft: ({ checkout }) => checkout ? 0 : '4px solid #fff',
       position: 'relative',
       [theme.breakpoints.down('md')]: {
-        height: '30rem',
+        height: ({ checkout }) => !checkout ? '30rem' : '100%',
         borderLeft: 0,
       },
     },

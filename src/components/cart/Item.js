@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import clsx from 'clsx'
 import Grid from '@material-ui/core/Grid'
 import Chip from '@material-ui/core/Chip'
 import IconButton  from '@material-ui/core/IconButton'
@@ -15,52 +16,60 @@ import SubscribeIcon from '../../images/Subscription'
 import DeleteIcon from '../../images/Delete'
 
 const useStyles = makeStyles(theme => ({
-    productImage: {
-        height: '10rem',
-        width: '10rem',
+  productImage: {
+    height: "8rem",
+    width: "8rem",
+  },
+  name: {
+    color: theme.palette.secondary.main,
+  },
+  id: {
+    color: theme.palette.secondary.main,
+    fontSize: "1rem",
+    [theme.breakpoints.down("xs")]: {
+      fontSize: "0.75rem",
     },
-    name: {
-        color: theme.palette.secondary.main,
+  },
+  actionWrapper: {
+    height: "3rem",
+    width: "3rem",
+    [theme.breakpoints.down("xs")]: {
+      height: "2rem",
+      width: "2rem",
     },
-    id: {
-        color: theme.palette.secondary.main,
-        fontSize: '1rem',
-        [theme.breakpoints.down('xs')]: {
-          fontSize: '0.75rem',
-        },
+  },
+  infoContainer: {
+    width: "35rem",
+    height: "8rem",
+    marginLeft: "1rem",
+    position: "relative",
+  },
+  chipWrapper: {
+    position: "absolute",
+    top: "3.5rem",
+  },
+  itemContainer: {
+    margin: "2rem 0 2rem 2rem",
+    [theme.breakpoints.down("md")]: {
+      margin: "2rem 0",
     },
-    actionWrapper: {
-        height: '3rem',
-        width: '3rem',
-        marginBottom: -8,
-        [theme.breakpoints.down('xs')]: {
-          height: '2rem',
-          width: '2rem',
-        },
+  },
+  actionButton: {
+    [theme.breakpoints.down("xs")]: {
+      padding: "12px 6px",
     },
-    infoContainer: {
-        width: '35rem',
-        height: '8rem',
-        marginLeft: '1rem',
-        position: 'relative',
-    },
-    chipWrapper: {
-        position: 'absolute',
-        top: '3.5rem',
-    },
-    itemContainer: {
-        margin: '2rem 0 2rem 2rem',
-        [theme.breakpoints.down('md')]: {
-          margin: '2rem 0',
-        },
-    },
-    actionButton: {
-      [theme.breakpoints.down('xs')]: {
-        padding: '12px 6px',
-      },
     "&:hover": {
-      backgroundColor: 'transparent',
+      backgroundColor: "transparent",
     },
+  },
+  chipRoot: {
+    marginLeft: "1rem",
+  },
+  actionContainer: {
+    marginBottom: "-0.5rem",
+  },
+  favoriteIcon: {
+    marginTop: 2,
   },
 }))
 
@@ -79,7 +88,7 @@ export default function Item({ item }) {
       props: {
       color: theme.palette.secondary.main,
       size: matchesXS ? 2 : 3,
-      buttonClass: classes.actionButton,
+      buttonClass: clsx(classes.actionButton, classes.favoriteIcon),
       variant: item.variant.id
     }, 
   },
@@ -124,6 +133,9 @@ export default function Item({ item }) {
         </Grid>
         <Grid item classes={{ root: classes.chipWrapper }}>
           <Chip label={`$${item.variant.price}`} />
+          {item.subscription ? <Chip 
+          classes={{root: classes.chipRoot}}
+           label={`Every ${item.subscription}`} /> : null}
         </Grid>
         <Grid
           item
@@ -136,7 +148,7 @@ export default function Item({ item }) {
               ID: {item.variant.id}
             </Typography>
           </Grid>
-          <Grid item container justifyContent="flex-end" xs={5} sm>
+          <Grid item container justifyContent="flex-end" xs={5} sm classes={{root: classes.actionContainer}}>
             {actions.map((action, i) => (
               <Grid item key={i}>
                 {action.component ? (

@@ -4,14 +4,13 @@ import Grid from '@material-ui/core/Grid'
 import Dialog from '@material-ui/core/Dialog'
 import Chip from '@material-ui/core/Chip'
 import Button from '@material-ui/core/Button'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 import useMediaQuery  from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
 import QtyButton from '../product-list/QtyButton'
+import SelectFrequency from './select-frequency'
 
 import { CartContext, FeedbackContext, UserContext } from '../../contexts'
 import { setSnackbar, addToCart } from '../../contexts/actions'
@@ -62,28 +61,6 @@ const useStyles = makeStyles(theme => ({
         borderRadius: 0,
         backgroundColor: theme.palette.primary.main
     },
-    chipRoot: {
-      backgroundColor: '#fff',
-      height: '3rem',
-      borderRadius: 50,
-      '&:hover': {
-        cursor: 'pointer'
-      },
-    },
-    chipLabel: {
-      color: theme.palette.secondary.main
-    },
-    select: {
-     '&.MuiSelect-select': {
-      paddingRight: 0
-     },
-    },
-    menu: {
-      backgroundColor: theme.palette.primary.main
-    },
-    menuItem: {
-      color: '#fff'
-    },
     buttonWrapper: {
       width: '100%'
     },
@@ -105,14 +82,7 @@ export default function Subscription({
   const { user } = useContext(UserContext)
   const matchesXS = useMediaQuery(theme => theme.breakpoints.down('xs'))
 
-  const frequencies = [
-    "Week",
-    "Two Weeks",
-    "Month",
-    "Three Months",
-    "Six Months",
-    "Year",
-  ]
+ 
 
   const handleCart = () => {
     dispatchCart(addToCart(variant, qty, name, stock[selectedVariant].qty, frequency))
@@ -181,33 +151,7 @@ export default function Subscription({
               <Typography variant="h4">Deliver Every</Typography>
             </Grid>
             <Grid item>
-              <Select
-                classes={{ select: classes.select }}
-                disableUnderline
-                MenuProps={{ classes: { paper: classes.menu } }}
-                value={frequency}
-                IconComponent={() => null}
-                onChange={event => setFrequency(event.target.value)}
-                renderValue={selected => (
-                  <Chip
-                    label={selected}
-                    classes={{
-                      root: classes.chipRoot,
-                      label: classes.chipLabel,
-                    }}
-                  />
-                )}
-              >
-                {frequencies.map(frequency => (
-                  <MenuItem
-                    classes={{ root: classes.menuItem }}
-                    key={frequency}
-                    value={frequency}
-                  >
-                    {frequency}
-                  </MenuItem>
-                ))}
-              </Select>
+             <SelectFrequency value={frequency} setValue={setFrequency} />
             </Grid>
           </Grid>
           <Grid item classes={{root: classes.buttonWrapper}}>

@@ -106,7 +106,9 @@ export default function Payments({
   setCardError,
   selectedStep,
   stepNumber,
-  setCard
+  setCard,
+  hasSubscriptionCart,
+  hasSubscriptionActive
 }) {
   const classes = useStyles({ checkout, selectedStep, stepNumber })
   const stripe = useStripe()
@@ -125,32 +127,62 @@ export default function Payments({
       : user.paymentMethods[slot]
 
       const removeCard = () => {
-        setLoading(true)
-
-        axios.post(process.env.GATSBY_STRAPI_URL + '/orders/removeCard', {
-          card: card.last4,
-        }, {
-          headers: { Authorization: `Bearer ${user.jwt}` },
-        }).then(response => {
-          setLoading(false)
-
-          dispatchUser(
-            setUser({ ...response.data.user, jwt: user.jwt, onboarding: true })
-          )
-          setCardError(true)
-          setCard({ brand: "", last4: "" })
-        }).catch(error => {
-          setLoading(false)
-          console.error(error)
-
+        const remaining = user.paymentMethods.filter(method => method.last4 !== "")
+        const subscriptionPayment = user.subscriptions.find(
+          subscription => subscription.paymentMethod.last4 === card.last4
+        )
+    
+        if (
+          (hasSubscriptionActive && remaining.length === 1) ||
+          subscriptionPayment
+        ) {
           dispatchFeedback(
             setSnackbar({
               status: "error",
               message:
-                "There was a problem removing your card. Please try again.",
+                "You cannot remove your last card with an active subscription. Please add another card first.",
             })
           )
-        })
+          return
+        }
+
+        setLoading(true)
+
+        axios
+          .post(
+            process.env.GATSBY_STRAPI_URL + "/orders/removeCard",
+            {
+              card: card.last4,
+            },
+            {
+              headers: { Authorization: `Bearer ${user.jwt}` },
+            }
+          )
+          .then(response => {
+            setLoading(false)
+
+            dispatchUser(
+              setUser({
+                ...response.data.user,
+                jwt: user.jwt,
+                onboarding: true,
+              })
+            )
+            setCardError(true)
+            setCard({ brand: "", last4: "" })
+          })
+          .catch(error => {
+            setLoading(false)
+            console.error(error)
+
+            dispatchFeedback(
+              setSnackbar({
+                status: "error",
+                message:
+                  "There was a problem removing your card. Please try again.",
+              })
+            )
+          })
       }
 
   const handleSubmit = async event => {
@@ -275,8 +307,8 @@ export default function Payments({
               labelPlacement="start"
               control={
                 <Switch
-                disabled={user.paymentMethods[slot].last4 !== ''}
-                  checked={user.paymentMethods[slot].last4 !== '' ? true : saveCard}
+                disabled={user.paymentMethods[slot].last4 !== '' || hasSubscriptionCart}
+                  checked={user.paymentMethods[slot].last4 !== '' || hasSubscriptionCart ? true : saveCard}
                   onChange={() => setSaveCard(!saveCard)}
                   color="secondary"
                 />

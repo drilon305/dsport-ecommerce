@@ -30,6 +30,8 @@ export default function Settings({ setSelectedSetting}) {
     const { user, dispatchUser } = useContext(UserContext)
     const [edit, setEdit] = useState(false)
     const [changesMade, setChangesMade] = useState(false)
+    const hasSubscriptionActive = user.subscriptions.length > 0
+
     const [detailValues, setDetailValues] = useState({
         name: "",
         phone: "",
@@ -79,7 +81,8 @@ setDetailErrors({})
           <Payments
            user={user}
             edit={edit}
-             slot={billingSlot} 
+             slot={billingSlot}
+             hasSubscriptionActive={hasSubscriptionActive}
             setSlot={setBillingSlot} 
             />
             </Elements>

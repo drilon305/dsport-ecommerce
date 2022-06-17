@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
       },
 }))
 
-export default function SelectFrequency({ value, setValue }) {
+export default function SelectFrequency({ value, setValue, chip }) {
   const classes = useStyles()
 
   const frequencies = [
@@ -51,7 +51,7 @@ export default function SelectFrequency({ value, setValue }) {
       value={value}
       IconComponent={() => null}
       onChange={event => setValue(event.target.value)}
-      renderValue={selected => (
+      renderValue={selected => chip || (
         <Chip
           label={selected}
           classes={{

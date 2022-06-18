@@ -13,7 +13,7 @@ import QtyButton from '../product-list/QtyButton'
 import SelectFrequency from './select-frequency'
 
 import { CartContext, FeedbackContext, UserContext } from '../../contexts'
-import { setSnackbar, addToCart } from '../../contexts/actions'
+import { setSnackbar, addToCart, toggleSubsciption, toggleSubscriptions } from '../../contexts/actions'
 
 import SubscriptionIcon from '../../images/Subscription'
 
@@ -73,12 +73,14 @@ export default function Subscription({
   variant,
   name,
   color,
-  noPadding
+  isCart,
+  noPadding,
+  cartFrequency
 }) {
   const classes = useStyles({ size, noPadding })
   const [open, setOpen] = useState(false)
   const [qty, setQty] = useState(1)
-  const [frequency, setFrequency] = useState("Month")
+  const [frequency, setFrequency] = useState( "Month")
   const { dispatchFeedback } = useContext(FeedbackContext)
   const { dispatchCart } = useContext(CartContext)
   const { user } = useContext(UserContext)
@@ -87,12 +89,17 @@ export default function Subscription({
  
 
   const handleCart = () => {
-    dispatchCart(addToCart(variant, qty, name, stock[selectedVariant].qty, frequency))
+    dispatchCart(addToCart(variant, qty, name, stock[selectedVariant].qty, cartFrequency))
     setOpen(false)
     dispatchFeedback(setSnackbar({ status: 'success', message: 'Subscription Added To Cart.'}))
   }
 
   const handleOpen = () => {
+    if(isCart) {
+      dispatchCart(toggleSubscriptions(isCart.variant, frequency))
+      return
+    }
+
     if (user.username === 'Guest') {
       dispatchFeedback(setSnackbar({ status: 'error', message: 'You must be logged in to create a subscription.'}))
       return

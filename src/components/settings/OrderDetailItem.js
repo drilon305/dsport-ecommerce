@@ -19,6 +19,9 @@ itemInfo: {
 container: {
     height: '10rem'
 },
+subscriptionChip: {
+    marginTop: '0.5rem'
+},
 }))
 
 export default function OrderDetailItem({ item }) {
@@ -41,7 +44,16 @@ export default function OrderDetailItem({ item }) {
                         Size: {item.variant.size}
                     </Typography>
                 ) : null}
+            <Grid container direction='column'>
+                <Grid item>
                 <Chip label={`$${item.variant.price}`} classes={{root: classes.chipRoot}} />
+                </Grid>
+                {item.subscription ? (
+              <Grid item classes={{root: classes.subscriptionChip}}>
+                    <Chip label={`Every ${item.subscription}`} classes={{root: classes.chipRoot}} />
+              </Grid>
+                ) : null}
+            </Grid>
             </Grid>
         </Grid>
     )

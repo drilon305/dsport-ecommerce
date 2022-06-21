@@ -99,6 +99,9 @@ query GetPromo {
       node {
         name
         description
+        category {
+          name
+        }
         strapiId
         variants {
           images {
@@ -140,13 +143,14 @@ data.allStrapiProduct.edges.map(({ node }, i) =>
         <Grid item>
           {selectedSlide === i ? (
             <Typography variant="h1" classes={{ root: classes.productName }}>
-              {node.name.split(" ")[0]}
+              {node.category.name.toLowerCase()}
             </Typography>
           ) : null}
         </Grid>
       </Grid>
     ),
     description: node.description,
+    url: `/${node.category.name.toLowerCase()}`
   })
 )
 
@@ -167,7 +171,7 @@ data.allStrapiProduct.edges.map(({ node }, i) =>
           <Typography  variant='h2' paragraph>
           {slides[selectedSlide].description}
           </Typography>
-          <Button>
+          <Button component={Link} to={slides[selectedSlide].url}>
             <Typography variant='h4' classes={{root: classes.explore}}>
               Explore
             </Typography>

@@ -7,6 +7,7 @@ import Chip from '@material-ui/core/Chip'
 import IconButton from "@material-ui/core/IconButton"
 import { useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
+import { Link } from 'gatsby'
 
 import explore from '../../images/explore.svg'
 import frame from "../../images/product-frame-grid.svg"
@@ -101,6 +102,8 @@ export default function FeaturedProduct({node, i, matchesMD, expanded, setExpand
         variables: { id: node.strapiId },
       })
 
+      const hasStyles = node.variants.some(variant => variant.style !== null)
+
     return (
       <Grid
         item
@@ -111,15 +114,11 @@ export default function FeaturedProduct({node, i, matchesMD, expanded, setExpand
         classes={{ root: classes.productContainer }}
       >
         <IconButton
-          onClick={() =>
-            expanded === i ? setExpanded(null) : setExpanded(i)
-          }
+          onClick={() => (expanded === i ? setExpanded(null) : setExpanded(i))}
           classes={{ root: classes.frame }}
         >
           <img
-            src={
-              process.env.GATSBY_STRAPI_URL + node.variants[0].images[0].url
-            }
+            src={process.env.GATSBY_STRAPI_URL + node.variants[0].images[0].url}
             alt={node.name}
             className={classes.featured}
           />
@@ -131,11 +130,12 @@ export default function FeaturedProduct({node, i, matchesMD, expanded, setExpand
           classes={{
             root: clsx(classes.slide, {
               [classes.slideLeft]:
-               !matchesMD && expanded === i && alignment === "flex-end",
+                !matchesMD && expanded === i && alignment === "flex-end",
               [classes.slideRight]:
-                !matchesMD && expanded === i &&
+                !matchesMD &&
+                expanded === i &&
                 (alignment === "flex-start" || alignment === "center"),
-                [classes.slideDown]: matchesMD && expanded === i
+              [classes.slideDown]: matchesMD && expanded === i,
             }),
           }}
         >
@@ -152,7 +152,13 @@ export default function FeaturedProduct({node, i, matchesMD, expanded, setExpand
             />
           </Grid>
           <Grid item classes={{ root: classes.exploreContainer }}>
-            <Button classes={{ root: classes.exploreButton }}>
+            <Button
+              component={Link}
+              to={`/${node.category.name.toLowerCase()}/${
+                node.name.split(" ")[0].toLowerCase()
+              }${hasStyles ? `?style=${node.variants[0].style}` : ''}`}
+              classes={{ root: classes.exploreButton }}
+            >
               <Typography variant="h5">Details</Typography>
               <img
                 src={explore}

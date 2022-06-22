@@ -6,7 +6,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles } from "@material-ui/core/styles"
 import { Link } from "gatsby"
 
-import cta from "../../images/cta.png"
+import ctaa from "../../images/cta.png"
 
 
 const useStyles = makeStyles(theme => ({
@@ -70,7 +70,7 @@ export default function CallToAction() {
         direction={matchesMD ? "column" : "row"}
       >
         <Grid item>
-          <img src={cta} className={classes.icon} alt="cta" />
+          <img src={ctaa} className={classes.icon} alt="cta" />
         </Grid>
         <Grid item classes={{root: classes.headingContainer}}>
           <Grid container direction="column">
@@ -85,7 +85,7 @@ export default function CallToAction() {
                 variant="body1"
                 classes={{root: classes.mjellmaText}}
               >
-                At Mjellma our mission is to provide comfortable, durable,
+                At DS-SPORT our mission is to provide comfortable, durable,
                 premium, designer clothing accessories.
               </Typography>
             </Grid>

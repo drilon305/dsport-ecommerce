@@ -177,7 +177,7 @@ export default function Header({ categories }) {
           to="/"
           classes={{ root: classes.logoContainer }}
         >
-          <Typography variant="h1" classes={{ root: classes.logo}}>Mjellma</Typography>
+          <Typography variant="h1" classes={{ root: classes.logo}}>DS-SPORT</Typography>
         </Button>
         {matchesMD ? drawer : tabs}
         {actions.map(action => {

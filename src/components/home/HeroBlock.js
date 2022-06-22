@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 import useMediaQuery from "@material-ui/core/useMediaQuery"
 
-import mjellma from '../../images/mjellma.jpg'
+import mjellmaHero from '../../images/mjellma.jpg'
 
 const useStyles = makeStyles(theme => ({
   textContainer: {
@@ -34,21 +34,23 @@ export default function HeroBlock() {
         <Grid item container direction="column">
     <Grid item>
         <Typography align='center' variant='h1' classes={{ root: classes.heading }}>
-    The premier
+    BETTER WAY TO START
     <br />
-    Developer clothing line
+     THE SHOPPING
         </Typography>
     </Grid>
     <Grid item>
-        <Typography align='center' variant='h3'>
-            High quality, custom desgined, shirt, hats, and hoodies
+        <Typography align='center' variant='body1'>
+        Make the new experience of shopping, 
+        <br />
+        get the high quality products from your favourite brands.
         </Typography>
         </Grid>
       </Grid>
       </Grid>
       <Grid item>
-          <img src={mjellma} alt='mjellma' width={matchesXS
-              ? "350rem"
+          <img src={mjellmaHero} alt='mjellma' width={matchesXS
+              ? "420rem"
               : matchesMD
               ? "550rem"
               : matchesLG

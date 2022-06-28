@@ -165,7 +165,7 @@ data.allStrapiProduct.edges.map(({ node }, i) =>
         direction={matchesMD ? 'column' : 'row'}
       >
         <Grid item classes={{root: classes.carouselContainer}}>
-          <Carousel slides={slides} goToSlide={selectedSlide} />
+        <Carousel slides={slides} goToSlide={selectedSlide} />
         </Grid>
         <Grid item classes={{ root: classes.descriptionContainer }}>
           <Typography  variant='h2' paragraph>

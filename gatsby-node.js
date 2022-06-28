@@ -6,7 +6,7 @@
 
 // You can delete this file if you're not using it
 
-exports.createPages = async({ graphql, actions, }) => {
+exports.createPages = async({ graphql, actions }) => {
   const { createPage } = actions
 
   const result = await graphql(

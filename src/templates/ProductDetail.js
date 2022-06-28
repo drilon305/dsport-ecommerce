@@ -24,7 +24,7 @@ export default function ProductDetail({
 
   const matchesMD = useMediaQuery(theme => theme.breakpoints.down('md'));
 
-  const params = new URLSearchParams(window.location.search)
+  const params = typeof window !== 'undefined' ?  new URLSearchParams(window.location.search) : { get: () => null}
   const style = params.get("style")
 
   const { loading, error, data } = useQuery(GET_DETAILS, {

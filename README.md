@@ -2,13 +2,17 @@
 
 
 
+<img alt="Gatsby" src="https://i.ibb.co/4f2xhVW/11.png"  />
+
+<img alt="Gatsby" src="https://i.ibb.co/TYf4789/screencapture-localhost-8000-cart-2022-06-29-22-19-23-1.png"  />
+
+<img alt="Gatsby" src="[https://i.ibb.co/4f2xhVW/11.png](https://i.ibb.co/qWjgm68/screencapture-localhost-8000-account-2022-06-29-22-18-48-1.png)"  />
+
 <p align="center">
   <a href="https://www.gatsbyjs.com">
     <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
   </a>
 </p>
-
-<img alt="Gatsby" src="https://i.ibb.co/4f2xhVW/11.png"  />
 
 ## 🚀 Quick start
 
